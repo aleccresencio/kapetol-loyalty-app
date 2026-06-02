@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle, IonButton,
-  IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButtons
+  IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButtons,
+  ViewWillEnter
 } from '@ionic/angular/standalone';
 import { CustomerService } from '../../../services/customer';
 import { SessionService } from '../../../services/session';
@@ -17,7 +18,7 @@ import { SessionService } from '../../../services/session';
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export class CustomerDashboardPage implements OnInit {
+export class CustomerDashboardPage implements ViewWillEnter {
   customerName = '';
   totalPoints = 0;
   qrCodeUrl = '';
@@ -25,10 +26,11 @@ export class CustomerDashboardPage implements OnInit {
   constructor(
     private customerService: CustomerService,
     private session: SessionService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
+  ionViewWillEnter() {
     const id = this.session.getCustomerId();
     const phone = this.session.getCustomerPhone();
 
@@ -43,6 +45,7 @@ export class CustomerDashboardPage implements OnInit {
       next: (customer) => {
         this.customerName = customer.name;
         this.totalPoints = customer.totalPoints;
+        this.cdr.detectChanges();
       }
     });
   }
