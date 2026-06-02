@@ -9,10 +9,10 @@
   font-weight: 600;
 }
 
-.scanner-section zxing-scanner {
+.scanner-video {
   width: 100%;
   border-radius: 8px;
-  overflow: hidden;
+  background: #000;
 }
 
 .result-card {

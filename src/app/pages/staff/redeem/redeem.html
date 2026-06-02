@@ -12,8 +12,9 @@
   @if (scanning && selectedReward) {
     <div class="scanner-section">
       <h3>Scan customer QR for "{{ selectedReward.name }}"</h3>
-      <zxing-scanner (scanSuccess)="onScanSuccess($event)"></zxing-scanner>
-      <ion-button expand="block" fill="outline" (click)="scanning = false; selectedReward = null">
+      <video #videoEl autoplay playsinline class="scanner-video"></video>
+      <canvas #canvasEl style="display:none"></canvas>
+      <ion-button expand="block" fill="outline" (click)="cancelScanning()">
         Cancel
       </ion-button>
     </div>

@@ -1,11 +1,11 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle, IonButton, IonButtons,
   IonItem, IonLabel, IonInput, IonCard, IonCardContent, IonText
 } from '@ionic/angular/standalone';
-import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import jsQR from 'jsqr';
 import { LoyaltyService } from '../../../services/loyalty';
 import { SessionService } from '../../../services/session';
 
@@ -13,7 +13,7 @@ import { SessionService } from '../../../services/session';
   selector: 'app-staff-scan',
   standalone: true,
   imports: [
-    FormsModule, ZXingScannerModule,
+    FormsModule,
     IonContent, IonHeader, IonToolbar, IonTitle, IonButton, IonButtons,
     IonItem, IonLabel, IonInput, IonCard, IonCardContent, IonText
   ],
@@ -26,7 +26,12 @@ export class StaffScanPage {
   totalSpent = 0;
   result: { name: string; pointsEarned: number; totalPoints: number } | null = null;
   error = '';
-  selectedDevice: any;
+
+  @ViewChild('videoEl') videoEl!: ElementRef<HTMLVideoElement>;
+  @ViewChild('canvasEl') canvasEl!: ElementRef<HTMLCanvasElement>;
+
+  private stream: MediaStream | null = null;
+  private scanning$ = false;
 
   constructor(
     private loyaltyService: LoyaltyService,
@@ -35,28 +40,62 @@ export class StaffScanPage {
     private cdr: ChangeDetectorRef
   ) {}
 
-  startScanning() {
+  async startScanning() {
     this.scanning = true;
+    this.error = '';
+    setTimeout(() => this.initCamera());
   }
 
-  initCamera(devices: any) {
-    if (this.selectedDevice) { return; }
-
-    const integratedCamera = devices.find((device: any) =>
-      /integrated|built-in|webcam/i.test(device.label)
-    );
-
-    setTimeout(() => {
-      this.selectedDevice = integratedCamera || devices[0];
-    }, 1000);
-  }
-
-  onScanSuccess(result: string) {
-    this.qrCodeId = result;
-    setTimeout(() => {
+  private async initCamera() {
+    try {
+      this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = this.videoEl.nativeElement;
+      video.srcObject = this.stream;
+      await video.play();
+      this.scanning$ = true;
+      this.scanLoop();
+    } catch (err: any) {
+      this.error = `Camera error: ${err.name} — ${err.message}`;
       this.scanning = false;
       this.cdr.detectChanges();
-    });
+    }
+  }
+
+  private scanLoop() {
+    if (!this.scanning$) return;
+
+    const video = this.videoEl.nativeElement;
+    const canvas = this.canvasEl.nativeElement;
+
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+      if (code) {
+        this.stopCamera();
+        this.qrCodeId = code.data;
+        this.scanning = false;
+        this.cdr.detectChanges();
+        return;
+      }
+    }
+
+    requestAnimationFrame(() => this.scanLoop());
+  }
+
+  private stopCamera() {
+    this.scanning$ = false;
+    this.stream?.getTracks().forEach(t => t.stop());
+    this.stream = null;
+  }
+
+  cancelScanning() {
+    this.stopCamera();
+    this.scanning = false;
   }
 
   submit() {
@@ -86,6 +125,7 @@ export class StaffScanPage {
   }
 
   logout() {
+    this.stopCamera();
     this.session.clearStaff();
     this.router.navigate(['/']);
   }

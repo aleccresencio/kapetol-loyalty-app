@@ -8,13 +8,13 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-
   <div class="scan-container">
 
     @if (scanning) {
       <div class="scanner-wrapper">
-        <zxing-scanner [device]="selectedDevice" (camerasFound)="initCamera($event)" (scanSuccess)="onScanSuccess($event)"></zxing-scanner>
-        <ion-button expand="block" fill="outline" (click)="scanning = false">
+        <video #videoEl autoplay playsinline class="scanner-video"></video>
+        <canvas #canvasEl style="display:none"></canvas>
+        <ion-button expand="block" fill="outline" (click)="cancelScanning()">
           Cancel
         </ion-button>
       </div>
@@ -60,5 +60,4 @@
     }
 
   </div>
-
 </ion-content>
