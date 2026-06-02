@@ -69,6 +69,32 @@ Key endpoints consumed by this app:
 
 The Rewards table is auto-created and seeded (4 sample rewards) on first API startup via raw SQL in `Program.cs`.
 
+## Git workflow
+
+After completing any meaningful unit of work — a new feature, a bug fix, a config change — commit and push immediately. Never leave work uncommitted at the end of a session.
+
+Use conventional commit prefixes:
+- `feat:` — new feature or page
+- `fix:` — bug fix
+- `chore:` — dependencies, config, tooling
+- `docs:` — documentation only
+
+Commit related changes together in one logical commit rather than one giant commit per session. Push to `origin main` after every commit (or after a tight sequence of commits).
+
+```powershell
+git add <specific files>
+git commit -m @'
+feat: short description
+
+Longer explanation if needed.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+'@
+git push origin main
+```
+
+The remote is `https://github.com/aleccresencio/kapetol-loyalty-app` (private). Use PowerShell here-string syntax (`@'...'@`) for multi-line commit messages — bash heredocs (`<<'EOF'`) do not work in PowerShell.
+
 ## TypeScript config
 
 Strict mode is fully enabled including `strictTemplates`. Keep all types explicit — avoid `any`. The compiler target is ES2022 with `module: preserve`.
