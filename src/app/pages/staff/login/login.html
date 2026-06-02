@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Staff Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="login-container">
+
+    <h2>Enter Staff PIN</h2>
+
+    <ion-item>
+      <ion-label position="stacked">PIN</ion-label>
+      <ion-input
+        [(ngModel)]="pin"
+        type="password"
+        inputmode="numeric"
+        maxlength="4"
+        placeholder="••••">
+      </ion-input>
+    </ion-item>
+
+    @if (error) {
+      <ion-text color="danger">
+        <p>{{ error }}</p>
+      </ion-text>
+    }
+
+    <ion-button expand="block" class="ion-margin-top" (click)="login()">
+      Login
+    </ion-button>
+
+  </div>
+</ion-content>
