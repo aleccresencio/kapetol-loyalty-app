@@ -26,6 +26,7 @@ export class StaffScanPage {
   totalSpent = 0;
   result: { name: string; pointsEarned: number; totalPoints: number } | null = null;
   error = '';
+  selectedDevice: any;
 
   constructor(
     private loyaltyService: LoyaltyService,
@@ -36,6 +37,18 @@ export class StaffScanPage {
 
   startScanning() {
     this.scanning = true;
+  }
+
+  initCamera(devices: any) {
+    if (this.selectedDevice) { return; }
+
+    const integratedCamera = devices.find((device: any) =>
+      /integrated|built-in|webcam/i.test(device.label)
+    );
+
+    setTimeout(() => {
+      this.selectedDevice = integratedCamera || devices[0];
+    }, 1000);
   }
 
   onScanSuccess(result: string) {
