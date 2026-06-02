@@ -26,7 +26,6 @@ export class StaffScanPage {
   totalSpent = 0;
   result: { name: string; pointsEarned: number; totalPoints: number } | null = null;
   error = '';
-  selectedDevice: MediaDeviceInfo | undefined;
 
   constructor(
     private loyaltyService: LoyaltyService,
@@ -37,13 +36,6 @@ export class StaffScanPage {
 
   startScanning() {
     this.scanning = true;
-  }
-
-  onCamerasFound(cameras: MediaDeviceInfo[]) {
-    const real = cameras.find(d => !d.label.toLowerCase().includes('virtual') &&
-                                   !d.label.toLowerCase().includes('obs'));
-    this.selectedDevice = real ?? cameras[0];
-    this.cdr.detectChanges();
   }
 
   onScanSuccess(result: string) {

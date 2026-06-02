@@ -22,7 +22,6 @@ export class StaffRedeemPage implements OnInit {
   rewards: Reward[] = [];
   selectedReward: Reward | null = null;
   scanning = false;
-  selectedDevice: MediaDeviceInfo | undefined;
   result: { name: string; rewardName: string; pointsDeducted: number; totalPoints: number } | null = null;
   error = '';
 
@@ -43,13 +42,6 @@ export class StaffRedeemPage implements OnInit {
     this.result = null;
     this.error = '';
     this.scanning = true;
-  }
-
-  onCamerasFound(cameras: MediaDeviceInfo[]) {
-    const real = cameras.find(d => !d.label.toLowerCase().includes('virtual') &&
-                                   !d.label.toLowerCase().includes('obs'));
-    this.selectedDevice = real ?? cameras[0];
-    this.cdr.detectChanges();
   }
 
   onScanSuccess(qrCodeId: string) {
