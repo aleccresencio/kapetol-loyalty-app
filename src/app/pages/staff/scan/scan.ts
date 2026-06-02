@@ -40,8 +40,10 @@ export class StaffScanPage {
 
   onScanSuccess(result: string) {
     this.qrCodeId = result;
-    this.scanning = false;
-    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.scanning = false;
+      this.cdr.detectChanges();
+    });
   }
 
   submit() {

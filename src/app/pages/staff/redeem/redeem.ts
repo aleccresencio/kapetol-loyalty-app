@@ -45,10 +45,14 @@ export class StaffRedeemPage implements OnInit {
   }
 
   onScanSuccess(qrCodeId: string) {
-    this.scanning = false;
     if (!this.selectedReward) return;
+    const reward = this.selectedReward;
+    setTimeout(() => {
+      this.scanning = false;
+      this.cdr.detectChanges();
+    });
 
-    this.rewardsService.redeemReward(qrCodeId, this.selectedReward.id).subscribe({
+    this.rewardsService.redeemReward(qrCodeId, reward.id).subscribe({
       next: (response) => {
         this.result = response;
         this.selectedReward = null;
