@@ -12,7 +12,7 @@
   @if (scanning && selectedReward) {
     <div class="scanner-section">
       <h3>Scan customer QR for "{{ selectedReward.name }}"</h3>
-      <zxing-scanner [device]="selectedDevice" (scanSuccess)="onScanSuccess($event)"></zxing-scanner>
+      <zxing-scanner [device]="selectedDevice" (camerasFound)="onCamerasFound($event)" (scanSuccess)="onScanSuccess($event)"></zxing-scanner>
       <ion-button expand="block" fill="outline" (click)="scanning = false; selectedReward = null">
         Cancel
       </ion-button>

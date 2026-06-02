@@ -35,22 +35,15 @@ export class StaffScanPage {
     private cdr: ChangeDetectorRef
   ) {}
 
-  async startScanning() {
-    this.selectedDevice = await this.pickRealCamera();
+  startScanning() {
     this.scanning = true;
   }
 
-  // Picks the first real camera, skipping virtual devices like OBS.
-  // Must request getUserMedia first — labels are empty until permission is granted.
-  private async pickRealCamera(): Promise<MediaDeviceInfo | undefined> {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    stream.getTracks().forEach(t => t.stop());
-
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const cameras = devices.filter(d => d.kind === 'videoinput');
+  onCamerasFound(cameras: MediaDeviceInfo[]) {
     const real = cameras.find(d => !d.label.toLowerCase().includes('virtual') &&
                                    !d.label.toLowerCase().includes('obs'));
-    return real ?? cameras[0];
+    this.selectedDevice = real ?? cameras[0];
+    this.cdr.detectChanges();
   }
 
   onScanSuccess(result: string) {
