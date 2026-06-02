@@ -1,0 +1,11 @@
+.register-container {
+  max-width: 400px;
+  margin: 2rem auto;
+}
+
+.divider {
+  text-align: center;
+  margin: 1.5rem 0;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}

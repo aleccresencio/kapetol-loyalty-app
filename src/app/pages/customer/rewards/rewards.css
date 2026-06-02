@@ -1,0 +1,21 @@
+.points-summary {
+  margin-bottom: 1rem;
+}
+
+.points-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.points-label {
+  font-weight: 600;
+}
+
+.reward-end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}

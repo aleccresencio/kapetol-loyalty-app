@@ -1,0 +1,46 @@
+.dashboard-container {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.points-card {
+  text-align: center;
+}
+
+.points-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.points-value {
+  font-size: 4rem;
+  font-weight: bold;
+  color: var(--ion-color-primary);
+  line-height: 1;
+}
+
+.points-label {
+  font-size: 1.2rem;
+  color: var(--ion-color-medium);
+}
+
+.qr-card .qr-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qr-image {
+  width: 220px;
+  height: 220px;
+  border-radius: 8px;
+}
+
+.qr-hint {
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+  text-align: center;
+  margin-top: 0.5rem;
+}
