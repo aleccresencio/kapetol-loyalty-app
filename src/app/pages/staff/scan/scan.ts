@@ -26,6 +26,7 @@ export class StaffScanPage {
   totalSpent = 0;
   result: { name: string; pointsEarned: number; totalPoints: number } | null = null;
   error = '';
+  selectedDevice: MediaDeviceInfo | undefined;
 
   constructor(
     private loyaltyService: LoyaltyService,
@@ -33,6 +34,20 @@ export class StaffScanPage {
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
+
+  async startScanning() {
+    this.selectedDevice = await this.pickRealCamera();
+    this.scanning = true;
+  }
+
+  // Picks the first real camera, skipping virtual devices like OBS.
+  private async pickRealCamera(): Promise<MediaDeviceInfo | undefined> {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const cameras = devices.filter(d => d.kind === 'videoinput');
+    const real = cameras.find(d => !d.label.toLowerCase().includes('virtual') &&
+                                   !d.label.toLowerCase().includes('obs'));
+    return real ?? cameras[0];
+  }
 
   onScanSuccess(result: string) {
     this.qrCodeId = result;

@@ -22,6 +22,7 @@ export class StaffRedeemPage implements OnInit {
   rewards: Reward[] = [];
   selectedReward: Reward | null = null;
   scanning = false;
+  selectedDevice: MediaDeviceInfo | undefined;
   result: { name: string; rewardName: string; pointsDeducted: number; totalPoints: number } | null = null;
   error = '';
 
@@ -37,11 +38,21 @@ export class StaffRedeemPage implements OnInit {
     });
   }
 
-  selectReward(reward: Reward) {
+  async selectReward(reward: Reward) {
     this.selectedReward = reward;
     this.result = null;
     this.error = '';
+    this.selectedDevice = await this.pickRealCamera();
     this.scanning = true;
+  }
+
+  // Picks the first real camera, skipping virtual devices like OBS.
+  private async pickRealCamera(): Promise<MediaDeviceInfo | undefined> {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const cameras = devices.filter(d => d.kind === 'videoinput');
+    const real = cameras.find(d => !d.label.toLowerCase().includes('virtual') &&
+                                   !d.label.toLowerCase().includes('obs'));
+    return real ?? cameras[0];
   }
 
   onScanSuccess(qrCodeId: string) {
