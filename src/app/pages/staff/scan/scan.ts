@@ -41,7 +41,11 @@ export class StaffScanPage {
   }
 
   // Picks the first real camera, skipping virtual devices like OBS.
+  // Must request getUserMedia first — labels are empty until permission is granted.
   private async pickRealCamera(): Promise<MediaDeviceInfo | undefined> {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    stream.getTracks().forEach(t => t.stop());
+
     const devices = await navigator.mediaDevices.enumerateDevices();
     const cameras = devices.filter(d => d.kind === 'videoinput');
     const real = cameras.find(d => !d.label.toLowerCase().includes('virtual') &&
