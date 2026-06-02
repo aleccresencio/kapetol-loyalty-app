@@ -69,6 +69,29 @@ Key endpoints consumed by this app:
 
 The Rewards table is auto-created and seeded (4 sample rewards) on first API startup via raw SQL in `Program.cs`.
 
+## Change detection
+
+All components use Angular's default change detection, but Ionic's page lifecycle and HTTP callbacks run outside the zone in practice — meaning the view will not update automatically after an Observable `next` or `error` callback sets a property.
+
+**Rule: always call `this.cdr.detectChanges()` immediately after setting component state inside any Observable callback** (HTTP subscriptions, async operations). Inject `ChangeDetectorRef` via the constructor.
+
+```typescript
+constructor(private cdr: ChangeDetectorRef) {}
+
+this.someService.getData().subscribe({
+  next: (data) => {
+    this.items = data;
+    this.cdr.detectChanges(); // required
+  },
+  error: (err) => {
+    this.error = err.message;
+    this.cdr.detectChanges(); // required
+  }
+});
+```
+
+Navigation calls (`this.router.navigate`) after a `next` callback do not need `detectChanges()` since the page is being replaced.
+
 ## Git workflow
 
 After completing any meaningful unit of work — a new feature, a bug fix, a config change — commit and push immediately. Never leave work uncommitted at the end of a session.

@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle, IonButton, IonButtons,
   IonCard, IonCardContent,
-  IonList, IonItem, IonLabel, IonBadge, IonText,
+  IonList, IonItem, IonLabel, IonBadge,
   AlertController
 } from '@ionic/angular/standalone';
 import { RewardsService, Reward } from '../../../services/rewards';
@@ -31,12 +31,16 @@ export class CustomerRewardsPage implements OnInit {
     private customerService: CustomerService,
     private session: SessionService,
     private alertCtrl: AlertController,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.rewardsService.getRewards().subscribe({
-      next: (rewards) => (this.rewards = rewards)
+      next: (rewards) => {
+        this.rewards = rewards;
+        this.cdr.detectChanges();
+      }
     });
 
     const phone = this.session.getCustomerPhone();
@@ -45,6 +49,7 @@ export class CustomerRewardsPage implements OnInit {
         next: (customer) => {
           this.totalPoints = customer.totalPoints;
           this.qrCodeId = customer.qrCodeId;
+          this.cdr.detectChanges();
         }
       });
     }
@@ -79,6 +84,7 @@ export class CustomerRewardsPage implements OnInit {
     this.rewardsService.redeemReward(this.qrCodeId, reward.id).subscribe({
       next: async (result) => {
         this.totalPoints = result.totalPoints;
+        this.cdr.detectChanges();
         const alert = await this.alertCtrl.create({
           header: 'Redeemed!',
           message: `"${result.rewardName}" redeemed. Remaining points: ${result.totalPoints}`,

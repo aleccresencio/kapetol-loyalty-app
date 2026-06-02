@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -25,7 +25,8 @@ export class CustomerRegisterPage {
   constructor(
     private customerService: CustomerService,
     private session: SessionService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   register() {
@@ -46,6 +47,7 @@ export class CustomerRegisterPage {
       error: () => {
         this.error = 'Registration failed. Please try again.';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -68,6 +70,7 @@ export class CustomerRegisterPage {
       error: () => {
         this.error = 'No account found with that phone number.';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
