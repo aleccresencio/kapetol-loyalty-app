@@ -30,5 +30,17 @@
       Login
     </ion-button>
 
+    <ion-button expand="block" fill="outline" class="ion-margin-top" (click)="testCamera()">
+      Test Camera
+    </ion-button>
+
+    @if (cameraStatus) {
+      <p class="camera-status">{{ cameraStatus }}</p>
+    }
+
+    @if (showCamera) {
+      <video #videoEl autoplay playsinline class="camera-preview"></video>
+    }
+
   </div>
 </ion-content>

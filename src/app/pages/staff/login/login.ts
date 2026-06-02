@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -20,6 +20,10 @@ const STAFF_PIN = '1234';
 export class StaffLoginPage {
   pin = '';
   error = '';
+  cameraStatus = '';
+  showCamera = false;
+
+  @ViewChild('videoEl') videoEl!: ElementRef<HTMLVideoElement>;
 
   constructor(private session: SessionService, private router: Router) {}
 
@@ -30,6 +34,22 @@ export class StaffLoginPage {
     } else {
       this.error = 'Incorrect PIN. Please try again.';
       this.pin = '';
+    }
+  }
+
+  async testCamera() {
+    this.cameraStatus = 'Starting camera...';
+    this.showCamera = true;
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = this.videoEl.nativeElement;
+      video.srcObject = stream;
+      await video.play();
+      this.cameraStatus = 'Camera is working!';
+    } catch (err: any) {
+      this.cameraStatus = `Error: ${err.name} — ${err.message}`;
+      this.showCamera = false;
     }
   }
 }
