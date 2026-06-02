@@ -38,7 +38,10 @@ export class StaffRedeemPage implements OnInit {
 
   ngOnInit() {
     this.rewardsService.getRewards().subscribe({
-      next: (rewards) => (this.rewards = rewards)
+      next: (rewards) => {
+        this.rewards = rewards;
+        this.cdr.detectChanges();
+      }
     });
   }
 
