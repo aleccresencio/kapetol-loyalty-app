@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Kapetol Loyalty App — an Ionic + Angular 21 mobile-first web app for a cafe loyalty points system. It has two roles in a single app: **customers** (register, view QR code, browse/redeem rewards) and **cafe staff** (scan QR to award points, scan QR to deduct points for rewards).
 
-The companion .NET 10 backend lives at `C:\Users\Alec\KapetolLoyaltyApi` and runs on `http://localhost:5166`.
+The companion .NET 10 backend lives in this repo at `KapetolLoyaltyApi/` and runs on `http://localhost:5166`.
 
 ## Commands
 
