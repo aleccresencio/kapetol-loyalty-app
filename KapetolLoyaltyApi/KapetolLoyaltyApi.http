@@ -1,0 +1,6 @@
+@KapetolLoyaltyApi_HostAddress = http://localhost:5166
+
+GET {{KapetolLoyaltyApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
