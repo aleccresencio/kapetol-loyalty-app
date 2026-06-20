@@ -1,10 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CustomerService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:5166';
+  private apiUrl = environment.apiUrl;
 
   register(name: string, phone: string) {
     return this.http.post<{ id: number; name: string; phone: string; qrCodeId: string }>(

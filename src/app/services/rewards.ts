@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 export interface Reward {
   id: number;
@@ -11,7 +12,7 @@ export interface Reward {
 @Injectable({ providedIn: 'root' })
 export class RewardsService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:5166';
+  private apiUrl = environment.apiUrl;
 
   getRewards() {
     return this.http.get<Reward[]>(`${this.apiUrl}/api/rewards`);
