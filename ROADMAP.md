@@ -53,81 +53,78 @@ Small things that make the app feel more polished:
 
 ## Suggested Order
 
-1. Add environment.ts for the API URL (small change, unlocks deployment)
-2. Deploy the API to Railway
-3. Deploy the frontend to Vercel
-4. Build transaction history
-5. Build rewards management
-6. Add proper authentication
+1. ✅ Add environment.ts for the API URL (done — b3a24e6)
+2. Deploy the database to Azure SQL
+3. Deploy the API to Azure App Service
+4. Deploy the frontend to Azure Static Web Apps
+5. Build transaction history
+6. Build rewards management
+7. Add proper authentication
 
 ---
 
 ## Deploying to the Real World
 
-There are three parts: the backend API, the database, and the frontend app.
+All three parts deploy to Azure — one ecosystem, one account, all free tiers.
 
 ---
 
-### Step 1 — Host the Backend API
+### Step 1 — Host the Database (Azure SQL)
 
-Your .NET API needs to run on a server that is always on.
+Move off local SQL Server Express to Azure SQL, which is SQL Server in the cloud
+managed by Microsoft.
 
-Recommended options:
-- Railway (railway.app) — easiest, free tier available, supports .NET, HTTPS automatic
-- Azure App Service — Microsoft's own platform, good for .NET, has a free tier
-- Render (render.com) — simple, free tier for web services
+- Create an Azure SQL Server (logical server) and a database under it
+- The free tier (General Purpose Serverless, 32 GB) is enough for a pilot
+- You get a connection string like:
+    Server=tcp:kapetol.database.windows.net,1433;Database=KapetolDb;...
+- Replace the connection string in KapetolLoyaltyApi/appsettings.json (or use
+  an environment variable / Azure App Service app setting — preferred for secrets)
 
-You push your API code there, it runs, and you get a public URL like:
-  https://kapetol-api.railway.app
+Entity Framework migrations (dotnet ef database update) run against this cloud DB
+the same way they run locally.
 
 ---
 
-### Step 2 — Host the Database
+### Step 2 — Host the Backend API (Azure App Service)
 
-Move off local SQL Server to a cloud database.
+Azure App Service is a managed platform that runs your .NET app on a server
+Microsoft maintains. You never SSH into the box.
 
-Options:
-- Azure SQL — pairs naturally with .NET, has a free/cheap tier
-- Railway — can also host a SQL Server or PostgreSQL database
-- Supabase — if you want to switch to PostgreSQL, has a generous free tier
+- Create an App Service plan (F1 free tier) and a Web App targeting .NET 10
+- Deploy by pushing to the App Service's built-in Git remote, or via GitHub Actions
+- Azure auto-assigns a public URL: https://kapetol-api.azurewebsites.net
+- Add the Azure SQL connection string as an App Service application setting
+  (this keeps the secret out of source control)
 
-You will get a connection string to replace the one in appsettings.json.
+Cold starts on F1: the free tier idles after 20 minutes of inactivity and takes
+~10 seconds to wake up on the next request. Acceptable for a closed pilot.
 
 ---
 
 ### Step 3 — Update the Frontend API URL
 
-Every service currently hardcodes http://localhost:5166.
-Before deploying, switch to Angular's environment files:
+The environment files are already in place (src/environments/):
+- environment.ts uses http://localhost:5166 for local dev
+- environment.prod.ts needs the Azure App Service URL once it's known
 
-  src/environments/environment.ts         (development)
-  src/environments/environment.prod.ts    (production)
-
-Example:
-  export const environment = {
-    production: false,
-    apiUrl: 'http://localhost:5166'
-  };
-
+Update environment.prod.ts:
   export const environment = {
     production: true,
-    apiUrl: 'https://kapetol-api.railway.app'
+    apiUrl: 'https://kapetol-api.azurewebsites.net'
   };
-
-Then each service imports environment.apiUrl instead of the hardcoded value.
 
 ---
 
-### Step 4 — Deploy the Frontend
+### Step 4 — Deploy the Frontend (Azure Static Web Apps)
 
-Run: ng build
-This produces a dist/ folder of static files. Host it on:
+ng build produces a dist/ folder of static HTML/JS/CSS. Azure Static Web Apps
+hosts these for free and includes:
+- Automatic HTTPS with a free SSL certificate
+- GitHub Actions CI/CD (push to main → auto-deploy)
+- Custom domain support (free SSL even on your own domain)
 
-- Vercel (vercel.com) — free, GitHub integration, HTTPS automatic
-- Netlify (netlify.com) — free, same as Vercel
-- Firebase Hosting — Google's option, also has a free tier
-
-You will get a URL like: https://kapetol-loyalty.vercel.app
+You get a URL like: https://kapetol-loyalty.azurestaticapps.net
 
 ---
 
@@ -136,8 +133,8 @@ You will get a URL like: https://kapetol-loyalty.vercel.app
 Buy a .com or .ph domain from Namecheap or GoDaddy.
 Cost: roughly ₱600–₱1,500 per year.
 
-Point it at your Vercel/Netlify frontend and your Railway API.
-Both platforms walk you through the DNS settings.
+Point it at your Azure Static Web Apps frontend. Azure walks you through the
+DNS CNAME/TXT record setup and provisions SSL automatically.
 
 ---
 
@@ -149,23 +146,18 @@ that origin instead of (or in addition to) localhost:4200.
 Example:
   policy.WithOrigins(
     "http://localhost:4200",
-    "https://kapetol-loyalty.vercel.app"
+    "https://kapetol-loyalty.azurestaticapps.net"
   )
 
 ---
 
-### Step 7 — Publish as a Mobile App (Optional)
+### Step 7 — Publish as a Mobile App (Optional, deferred)
 
-Once everything works in the browser, Capacitor can package it as a native
-Android app.
+The pilot runs as a mobile-responsive website — Ionic already looks and feels
+like a native app in the browser, so no app store submission is needed for now.
 
-Commands:
-  npx cap sync
-  npx cap open android
-
-From Android Studio you can:
-- Generate an APK to share directly (sideload onto phones)
-- Sign it and publish to the Google Play Store
-  (requires a one-time $25 USD developer account fee)
-
-For iOS you need a Mac with Xcode and an Apple Developer account ($99 USD/year).
+If/when native packaging becomes a goal:
+- Capacitor is already a package.json dependency but has never been initialized
+- Steps: npx cap init → npx cap add android → npx cap sync → open in Android Studio
+- Google Play requires a one-time $25 USD developer account fee
+- iOS requires a Mac with Xcode and an Apple Developer account ($99 USD/year)
