@@ -22,7 +22,8 @@ builder.Services.AddCors(options =>
             policy.WithOrigins(
                     "http://localhost:4200",
                     "capacitor://localhost",
-                    "http://localhost")
+                    "http://localhost",
+                    "https://nice-plant-0781f7a00.7.azurestaticapps.net")
               .AllowAnyHeader()
               .AllowAnyMethod();
         });
