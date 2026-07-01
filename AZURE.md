@@ -172,7 +172,34 @@ Copy-Item publish_output\runtimes\unix\lib\net9.0\Microsoft.Data.SqlClient.dll `
 | App location | `/` (repo root, where package.json lives) |
 | Output location | `dist/kapetol-staff-dashboard/browser` |
 
-Deployments are fully automatic — every push to `main` triggers a build-and-deploy
+**How it was created (Azure Portal wizard):**
+
+1. Go to [portal.azure.com](https://portal.azure.com) → **Create a resource** → search **Static Web Apps** → **Create**
+2. Fill in:
+   - Subscription: Azure subscription 1
+   - Resource group: `kapetol-rg`
+   - Name: `kapetol-app`
+   - Plan type: **Free**
+   - Region: East Asia
+3. Under **Deployment details**, choose **GitHub** → sign in → select:
+   - Organization: `aleccresencio`
+   - Repository: `kapetol-loyalty-app`
+   - Branch: `main`
+4. Build presets: select **Angular** — Azure pre-fills the paths (verify/correct them):
+   - App location: `/`
+   - Output location: `dist/kapetol-staff-dashboard/browser`
+5. Click **Review + create** → **Create**
+
+Azure then:
+- Creates the Static Web Apps resource and generates a deploy token
+- Commits `.github/workflows/azure-static-web-apps-nice-plant-0781f7a00.yml` directly to the repo
+- Adds the deploy token as a GitHub repo secret automatically
+
+> **Why the Portal wizard instead of CLI?** The wizard handles the GitHub OAuth handshake and creates the GitHub secret automatically. The CLI (`az staticwebapp create`) requires a separate PAT and manual secret setup.
+
+> **Windows path bug in the generated workflow:** Because the wizard ran on a Windows machine, it inserted `C:/Program Files/Git/` as `app_location` and guessed the wrong `output_location`. Both were manually corrected — see [GitHub Actions — Frontend](#1-frontend--azure-static-web-apps) below.
+
+Deployments are fully automatic after setup — every push to `main` triggers a build-and-deploy
 via GitHub Actions (see below). No manual steps needed.
 
 ---
