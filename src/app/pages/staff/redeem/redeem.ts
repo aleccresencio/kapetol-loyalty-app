@@ -1,19 +1,14 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  IonContent, IonHeader, IonToolbar, IonTitle, IonButton, IonButtons,
-  IonList, IonItem, IonLabel, IonBadge, IonCard, IonCardContent, IonText
-} from '@ionic/angular/standalone';
-import jsQR from 'jsqr';
+import { Html5Qrcode } from 'html5-qrcode';
 import { RewardsService, Reward } from '../../../services/rewards';
+
+const READER_ELEMENT_ID = 'staff-redeem-reader';
 
 @Component({
   selector: 'app-staff-redeem',
   standalone: true,
-  imports: [
-    IonContent, IonHeader, IonToolbar, IonTitle, IonButton, IonButtons,
-    IonList, IonItem, IonLabel, IonBadge, IonCard, IonCardContent, IonText
-  ],
+  imports: [],
   templateUrl: './redeem.html',
   styleUrls: ['./redeem.css']
 })
@@ -24,11 +19,9 @@ export class StaffRedeemPage implements OnInit {
   result: { name: string; rewardName: string; pointsDeducted: number; totalPoints: number } | null = null;
   error = '';
 
-  @ViewChild('videoEl') videoEl!: ElementRef<HTMLVideoElement>;
-  @ViewChild('canvasEl') canvasEl!: ElementRef<HTMLCanvasElement>;
+  readonly readerElementId = READER_ELEMENT_ID;
 
-  private stream: MediaStream | null = null;
-  private scanning$ = false;
+  private html5QrCode: Html5Qrcode | null = null;
 
   constructor(
     private rewardsService: RewardsService,
@@ -55,42 +48,24 @@ export class StaffRedeemPage implements OnInit {
 
   private async initCamera() {
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      const video = this.videoEl.nativeElement;
-      video.srcObject = this.stream;
-      await video.play();
-      this.scanning$ = true;
-      this.scanLoop();
+      this.html5QrCode = new Html5Qrcode(this.readerElementId);
+      await this.html5QrCode.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => this.onScanSuccess(decodedText),
+        undefined
+      );
     } catch (err: any) {
-      this.error = `Camera error: ${err.name} — ${err.message}`;
+      this.error = `Camera error: ${err}`;
       this.scanning = false;
       this.cdr.detectChanges();
     }
   }
 
-  private scanLoop() {
-    if (!this.scanning$) return;
-
-    const video = this.videoEl.nativeElement;
-    const canvas = this.canvasEl.nativeElement;
-
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d')!;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, imageData.width, imageData.height);
-
-      if (code) {
-        this.stopCamera();
-        this.scanning = false;
-        this.processRedemption(code.data);
-        return;
-      }
-    }
-
-    requestAnimationFrame(() => this.scanLoop());
+  private onScanSuccess(decodedText: string) {
+    this.scanning = false;
+    this.stopCamera();
+    this.processRedemption(decodedText);
   }
 
   private processRedemption(qrCodeId: string) {
@@ -111,9 +86,10 @@ export class StaffRedeemPage implements OnInit {
   }
 
   private stopCamera() {
-    this.scanning$ = false;
-    this.stream?.getTracks().forEach(t => t.stop());
-    this.stream = null;
+    if (this.html5QrCode) {
+      this.html5QrCode.stop().then(() => this.html5QrCode?.clear()).catch(() => {});
+      this.html5QrCode = null;
+    }
   }
 
   cancelScanning() {

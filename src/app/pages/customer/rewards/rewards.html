@@ -1,43 +1,36 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button fill="clear" (click)="goBack()">Back</ion-button>
-    </ion-buttons>
-    <ion-title>Rewards</ion-title>
-  </ion-toolbar>
-</ion-header>
+<header class="page-header">
+  <button class="link-button" (click)="goBack()">Back</button>
+  <h1>Rewards</h1>
+  <span></span>
+</header>
 
-<ion-content class="ion-padding">
+<div class="rewards-container">
 
-  <ion-card class="points-summary">
-    <ion-card-content>
-      <div class="points-row">
-        <span class="points-label">Your Points</span>
-        <ion-badge color="primary">{{ totalPoints }}</ion-badge>
-      </div>
-    </ion-card-content>
-  </ion-card>
+  <div class="points-summary">
+    <span class="points-label">Your Points</span>
+    <span class="badge">{{ totalPoints }}</span>
+  </div>
 
-  <ion-list>
+  <ul class="reward-list">
     @for (reward of rewards; track reward.id) {
-      <ion-item>
-        <ion-label>
+      <li class="reward-item">
+        <div>
           <h2>{{ reward.name }}</h2>
           <p>{{ reward.description }}</p>
-        </ion-label>
-        <div slot="end" class="reward-end">
-          <ion-badge [color]="totalPoints >= reward.pointsCost ? 'success' : 'medium'">
+        </div>
+        <div class="reward-end">
+          <span class="badge" [class.badge-muted]="totalPoints < reward.pointsCost">
             {{ reward.pointsCost }} pts
-          </ion-badge>
-          <ion-button
-            size="small"
+          </span>
+          <button
+            class="btn btn-primary btn-small"
             [disabled]="totalPoints < reward.pointsCost"
             (click)="redeemReward(reward)">
             Redeem
-          </ion-button>
+          </button>
         </div>
-      </ion-item>
+      </li>
     }
-  </ion-list>
+  </ul>
 
-</ion-content>
+</div>

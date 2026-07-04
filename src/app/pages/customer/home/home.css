@@ -1,0 +1,88 @@
+.home-container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.card {
+  border: 1px solid #d8d0c5;
+  border-radius: 8px;
+  background: #fff;
+  padding: 1.25rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.card h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.points-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.points-value {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #6b4226;
+  line-height: 1;
+}
+
+.points-label {
+  font-size: 1.2rem;
+  color: #6b6258;
+}
+
+.qr-image {
+  width: 220px;
+  height: 220px;
+  border-radius: 8px;
+}
+
+.qr-hint {
+  font-size: 0.85rem;
+  color: #6b6258;
+  margin-top: 0.5rem;
+}
+
+.install-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: #fff3d6;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+}
+
+.install-banner p {
+  margin: 0;
+}
+
+.entry-container {
+  max-width: 400px;
+  margin: 3rem auto 0;
+  padding: 0 1.25rem;
+  text-align: center;
+}
+
+.entry-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.entry-subtitle {
+  color: #6b6258;
+  margin-bottom: 1.5rem;
+}
+
+.entry-footnote {
+  font-size: 0.8rem;
+  color: #6b6258;
+  margin-top: 0.75rem;
+}

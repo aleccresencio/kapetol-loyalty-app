@@ -5,20 +5,10 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/welcome/welcome').then(m => m.WelcomePage)
+      import('./pages/customer/home/home').then(m => m.CustomerHomePage)
   },
   {
-    path: 'customer/register',
-    loadComponent: () =>
-      import('./pages/customer/register/register').then(m => m.CustomerRegisterPage)
-  },
-  {
-    path: 'customer/dashboard',
-    loadComponent: () =>
-      import('./pages/customer/dashboard/dashboard').then(m => m.CustomerDashboardPage)
-  },
-  {
-    path: 'customer/rewards',
+    path: 'rewards',
     loadComponent: () =>
       import('./pages/customer/rewards/rewards').then(m => m.CustomerRewardsPage)
   },

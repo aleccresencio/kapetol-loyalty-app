@@ -1,63 +1,44 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Earn Points</ion-title>
-    <ion-buttons slot="end">
-      <ion-button fill="clear" (click)="logout()">Logout</ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<header class="page-header">
+  <h1>Earn Points</h1>
+  <button class="link-button" (click)="logout()">Logout</button>
+</header>
 
-<ion-content class="ion-padding">
-  <div class="scan-container">
+<div class="scan-container">
 
-    @if (scanning) {
-      <div class="scanner-wrapper">
-        <video #videoEl autoplay playsinline class="scanner-video"></video>
-        <canvas #canvasEl style="display:none"></canvas>
-        <ion-button expand="block" fill="outline" (click)="cancelScanning()">
-          Cancel
-        </ion-button>
-      </div>
-    } @else {
-      <ion-item>
-        <ion-label position="stacked">QR Code ID</ion-label>
-        <ion-input [(ngModel)]="qrCodeId" placeholder="Scan or type QR code ID" readonly></ion-input>
-      </ion-item>
+  @if (scanning) {
+    <div class="scanner-wrapper">
+      <div [id]="readerElementId" class="scanner-video"></div>
+      <button class="btn btn-outline" (click)="cancelScanning()">Cancel</button>
+    </div>
+  } @else {
+    <label class="field">
+      <span>QR Code ID</span>
+      <input [(ngModel)]="qrCodeId" placeholder="Scan or type QR code ID" readonly>
+    </label>
 
-      <ion-button expand="block" fill="outline" (click)="startScanning()" class="ion-margin-top">
-        Scan QR Code
-      </ion-button>
+    <button class="btn btn-outline" (click)="startScanning()">Scan QR Code</button>
 
-      <ion-item class="ion-margin-top">
-        <ion-label position="stacked">Total Spent (₱)</ion-label>
-        <ion-input [(ngModel)]="totalSpent" type="number" placeholder="e.g. 250"></ion-input>
-      </ion-item>
+    <label class="field">
+      <span>Total Spent (₱)</span>
+      <input [(ngModel)]="totalSpent" type="number" placeholder="e.g. 250">
+    </label>
 
-      @if (error) {
-        <ion-text color="danger">
-          <p>{{ error }}</p>
-        </ion-text>
-      }
-
-      @if (result) {
-        <ion-card class="result-card">
-          <ion-card-content>
-            <h3>Points Added!</h3>
-            <p>Customer: <strong>{{ result.name }}</strong></p>
-            <p>Points Earned: <strong>{{ result.pointsEarned }}</strong></p>
-            <p>Total Points: <strong>{{ result.totalPoints }}</strong></p>
-          </ion-card-content>
-        </ion-card>
-      }
-
-      <ion-button expand="block" (click)="submit()" class="ion-margin-top">
-        Add Points
-      </ion-button>
-
-      <ion-button expand="block" fill="outline" (click)="goToRedeem()" class="ion-margin-top">
-        Redeem a Reward
-      </ion-button>
+    @if (error) {
+      <p class="error-text">{{ error }}</p>
     }
 
-  </div>
-</ion-content>
+    @if (result) {
+      <div class="result-card">
+        <h3>Points Added!</h3>
+        <p>Customer: <strong>{{ result.name }}</strong></p>
+        <p>Points Earned: <strong>{{ result.pointsEarned }}</strong></p>
+        <p>Total Points: <strong>{{ result.totalPoints }}</strong></p>
+      </div>
+    }
+
+    <button class="btn btn-primary" (click)="submit()">Add Points</button>
+
+    <button class="btn btn-outline" (click)="goToRedeem()">Redeem a Reward</button>
+  }
+
+</div>

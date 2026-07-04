@@ -118,9 +118,12 @@ subsequent requests run at normal speed.
 | Setting name | Type | Value |
 |---|---|---|
 | DefaultConnection | Connection String (SQLAzure) | Full Azure SQL connection string |
+| StaffPin | App Setting | Shared 4-digit staff PIN (overrides the `appsettings.json` dev default) |
+| StaffTokenSecret | App Setting | HMAC signing secret for staff session tokens (overrides the dev default) |
 
 These are set via the Azure portal or CLI and override `appsettings.json` at
-runtime. The database password never touches source control.
+runtime. The database password, staff PIN, and token secret never touch
+source control in production.
 
 **CLI commands used to create it:**
 

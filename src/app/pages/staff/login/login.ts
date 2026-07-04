@@ -1,35 +1,66 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  IonContent, IonHeader, IonToolbar, IonTitle,
-  IonItem, IonLabel, IonInput, IonButton, IonText
-} from '@ionic/angular/standalone';
+import { StaffAuthService } from '../../../services/staff-auth';
 import { SessionService } from '../../../services/session';
 
-const STAFF_PIN = '1234';
+const PIN_LENGTH = 4;
 
 @Component({
   selector: 'app-staff-login',
   standalone: true,
-  imports: [FormsModule, IonContent, IonHeader, IonToolbar, IonTitle,
-    IonItem, IonLabel, IonInput, IonButton, IonText],
+  imports: [],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
 export class StaffLoginPage {
   pin = '';
-  error = '';
+  shake = false;
+  submitting = false;
 
-  constructor(private session: SessionService, private router: Router) {}
+  readonly digitIndicators = Array.from({ length: PIN_LENGTH });
+  readonly keypad = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'back'];
 
-  login() {
-    if (this.pin === STAFF_PIN) {
-      this.session.setStaffAuthenticated();
-      this.router.navigate(['/staff/scan']);
-    } else {
-      this.error = 'Incorrect PIN. Please try again.';
-      this.pin = '';
+  constructor(
+    private staffAuth: StaffAuthService,
+    private session: SessionService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  pressKey(key: string) {
+    if (this.submitting) return;
+
+    if (key === 'back') {
+      this.pin = this.pin.slice(0, -1);
+      return;
     }
+    if (key === '' || this.pin.length >= PIN_LENGTH) return;
+
+    this.pin += key;
+
+    if (this.pin.length === PIN_LENGTH) {
+      this.submit();
+    }
+  }
+
+  private submit() {
+    this.submitting = true;
+
+    this.staffAuth.verifyPin(this.pin).subscribe({
+      next: (response) => {
+        this.session.setStaffSession(response.token, new Date(response.expiresAt).getTime());
+        this.router.navigate(['/staff/scan']);
+      },
+      error: () => {
+        this.pin = '';
+        this.submitting = false;
+        this.shake = true;
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.shake = false;
+          this.cdr.detectChanges();
+        }, 400);
+      }
+    });
   }
 }

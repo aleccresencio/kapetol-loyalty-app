@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { RouterOutlet } from '@angular/router';
+import { StaffIdleService } from './services/staff-idle';
 
 @Component({
   selector: 'app-root',
-  imports: [IonApp, IonRouterOutlet],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {}
+export class App {
+  constructor(private staffIdle: StaffIdleService) {}
+}

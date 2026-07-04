@@ -1,0 +1,72 @@
+@if (view === 'dashboard') {
+  <header class="page-header">
+    <h1>My Dashboard</h1>
+    <button class="link-button" (click)="logout()">Logout</button>
+  </header>
+
+  <div class="home-container">
+
+    @if (pwaInstall.showIosBanner()) {
+      <div class="install-banner">
+        <p>Install this app: tap <strong>Share</strong> → <strong>Add to Home Screen</strong>.</p>
+        <button class="link-button" (click)="dismissIosBanner()">Dismiss</button>
+      </div>
+    }
+
+    @if (pwaInstall.canInstall()) {
+      <button class="btn btn-outline" (click)="installApp()">Install App</button>
+    }
+
+    <div class="card points-card">
+      <h2>Hi, {{ customerName }}!</h2>
+      <div class="points-display">
+        <span class="points-value">{{ totalPoints }}</span>
+        <span class="points-label">points</span>
+      </div>
+    </div>
+
+    <div class="card qr-card">
+      <h2>Your QR Code</h2>
+      <img [src]="qrCodeUrl" alt="Your QR Code" class="qr-image" />
+      <p class="qr-hint">Show this to the cafe staff to earn or redeem points.</p>
+    </div>
+
+    <button class="btn btn-primary" (click)="goToRewards()">Browse Rewards</button>
+
+  </div>
+} @else {
+
+  <div class="entry-container">
+    <h1 class="entry-title">Welcome back</h1>
+    <p class="entry-subtitle">First time? Just enter your number.</p>
+
+    @if (view === 'phone') {
+      <label class="field">
+        <span>Mobile Number</span>
+        <input [(ngModel)]="phone" type="tel" placeholder="09XX XXX XXXX" [disabled]="loading">
+      </label>
+
+      @if (error) {
+        <p class="error-text">{{ error }}</p>
+      }
+
+      <button class="btn btn-primary" (click)="continueWithPhone()" [disabled]="loading">Continue</button>
+
+      <p class="entry-footnote">No password. Your QR code is generated automatically.</p>
+    }
+
+    @if (view === 'name') {
+      <label class="field">
+        <span>Full Name</span>
+        <input [(ngModel)]="name" type="text" placeholder="Enter your name" [disabled]="loading">
+      </label>
+
+      @if (error) {
+        <p class="error-text">{{ error }}</p>
+      }
+
+      <button class="btn btn-primary" (click)="register()" [disabled]="loading">Create Account</button>
+    }
+  </div>
+
+}

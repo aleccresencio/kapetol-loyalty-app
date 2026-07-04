@@ -1,21 +1,47 @@
 import { Injectable } from '@angular/core';
 
-const STAFF_KEY = 'staff_authenticated';
+const STAFF_SESSION_KEY = 'staff_session';
 const CUSTOMER_ID_KEY = 'customer_id';
 const CUSTOMER_PHONE_KEY = 'customer_phone';
 
+export const STAFF_IDLE_TIMEOUT_MS = 15 * 60 * 1000;
+
+interface StaffSession {
+  token: string;
+  expiresAt: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SessionService {
-  setStaffAuthenticated() {
-    sessionStorage.setItem(STAFF_KEY, 'true');
+  setStaffSession(token: string, expiresAt: number) {
+    const session: StaffSession = { token, expiresAt };
+    sessionStorage.setItem(STAFF_SESSION_KEY, JSON.stringify(session));
+  }
+
+  getStaffSession(): StaffSession | null {
+    const raw = sessionStorage.getItem(STAFF_SESSION_KEY);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as StaffSession;
+    } catch {
+      return null;
+    }
   }
 
   isStaffAuthenticated(): boolean {
-    return sessionStorage.getItem(STAFF_KEY) === 'true';
+    const session = this.getStaffSession();
+    return !!session && session.expiresAt > Date.now();
+  }
+
+  refreshStaffExpiry(timeoutMs: number = STAFF_IDLE_TIMEOUT_MS) {
+    const session = this.getStaffSession();
+    if (!session) return;
+    session.expiresAt = Date.now() + timeoutMs;
+    sessionStorage.setItem(STAFF_SESSION_KEY, JSON.stringify(session));
   }
 
   clearStaff() {
-    sessionStorage.removeItem(STAFF_KEY);
+    sessionStorage.removeItem(STAFF_SESSION_KEY);
   }
 
   setCustomerId(id: number) {

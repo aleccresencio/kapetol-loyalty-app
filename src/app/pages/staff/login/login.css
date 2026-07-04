@@ -2,22 +2,74 @@
   max-width: 340px;
   margin: 3rem auto;
   text-align: center;
+  padding: 0 1.25rem;
 }
 
-h2 {
+.lock-icon {
+  font-size: 2.5rem;
+}
+
+h1 {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 1.4rem;
+}
+
+.subtitle {
+  color: #6b6258;
   margin-bottom: 1.5rem;
-  font-weight: 600;
 }
 
-.camera-status {
-  margin-top: 0.75rem;
-  font-size: 0.9rem;
-  color: var(--ion-color-medium);
+.pin-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
-.camera-preview {
-  width: 100%;
-  margin-top: 1rem;
-  border-radius: 8px;
-  background: #000;
+.pin-indicators.shake {
+  animation: shake 0.4s;
+}
+
+.pin-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #6b4226;
+  background: transparent;
+}
+
+.pin-dot.filled {
+  background: #6b4226;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.key {
+  padding: 1rem 0;
+  font-size: 1.3rem;
+  border-radius: 50%;
+  border: 1px solid #d8d0c5;
+  background: #fff;
+  cursor: pointer;
+}
+
+.key-empty {
+  background: transparent;
+  border: none;
+}
+
+.key-back {
+  color: #6b4226;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-8px); }
+  80% { transform: translateX(8px); }
 }

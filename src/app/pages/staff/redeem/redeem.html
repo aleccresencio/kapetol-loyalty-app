@@ -1,57 +1,43 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button fill="clear" (click)="goBack()">Back</ion-button>
-    </ion-buttons>
-    <ion-title>Redeem Reward</ion-title>
-  </ion-toolbar>
-</ion-header>
+<header class="page-header">
+  <button class="link-button" (click)="goBack()">Back</button>
+  <h1>Redeem Reward</h1>
+  <span></span>
+</header>
 
-<ion-content class="ion-padding">
+@if (scanning && selectedReward) {
+  <div class="scanner-section">
+    <h3>Scan customer QR for "{{ selectedReward.name }}"</h3>
+    <div [id]="readerElementId" class="scanner-video"></div>
+    <button class="btn btn-outline" (click)="cancelScanning()">Cancel</button>
+  </div>
+} @else {
 
-  @if (scanning && selectedReward) {
-    <div class="scanner-section">
-      <h3>Scan customer QR for "{{ selectedReward.name }}"</h3>
-      <video #videoEl autoplay playsinline class="scanner-video"></video>
-      <canvas #canvasEl style="display:none"></canvas>
-      <ion-button expand="block" fill="outline" (click)="cancelScanning()">
-        Cancel
-      </ion-button>
+  @if (result) {
+    <div class="result-card">
+      <h3>Reward Redeemed!</h3>
+      <p>Customer: <strong>{{ result.name }}</strong></p>
+      <p>Reward: <strong>{{ result.rewardName }}</strong></p>
+      <p>Points Deducted: <strong>{{ result.pointsDeducted }}</strong></p>
+      <p>Remaining Points: <strong>{{ result.totalPoints }}</strong></p>
     </div>
-  } @else {
-
-    @if (result) {
-      <ion-card class="result-card">
-        <ion-card-content>
-          <h3>Reward Redeemed!</h3>
-          <p>Customer: <strong>{{ result.name }}</strong></p>
-          <p>Reward: <strong>{{ result.rewardName }}</strong></p>
-          <p>Points Deducted: <strong>{{ result.pointsDeducted }}</strong></p>
-          <p>Remaining Points: <strong>{{ result.totalPoints }}</strong></p>
-        </ion-card-content>
-      </ion-card>
-    }
-
-    @if (error) {
-      <ion-text color="danger">
-        <p>{{ error }}</p>
-      </ion-text>
-    }
-
-    <p class="instruction">Select a reward, then scan the customer's QR code.</p>
-
-    <ion-list>
-      @for (reward of rewards; track reward.id) {
-        <ion-item button (click)="selectReward(reward)">
-          <ion-label>
-            <h2>{{ reward.name }}</h2>
-            <p>{{ reward.description }}</p>
-          </ion-label>
-          <ion-badge slot="end" color="primary">{{ reward.pointsCost }} pts</ion-badge>
-        </ion-item>
-      }
-    </ion-list>
-
   }
 
-</ion-content>
+  @if (error) {
+    <p class="error-text">{{ error }}</p>
+  }
+
+  <p class="instruction">Select a reward, then scan the customer's QR code.</p>
+
+  <ul class="reward-list">
+    @for (reward of rewards; track reward.id) {
+      <li class="reward-item" (click)="selectReward(reward)">
+        <div>
+          <h2>{{ reward.name }}</h2>
+          <p>{{ reward.description }}</p>
+        </div>
+        <span class="badge">{{ reward.pointsCost }} pts</span>
+      </li>
+    }
+  </ul>
+
+}

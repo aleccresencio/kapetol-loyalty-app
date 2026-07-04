@@ -1,34 +1,23 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Staff Login</ion-title>
-  </ion-toolbar>
-</ion-header>
+<div class="login-container">
+  <div class="lock-icon">🔒</div>
+  <h1>Staff access</h1>
+  <p class="subtitle">Enter your 4-digit PIN</p>
 
-<ion-content class="ion-padding">
-  <div class="login-container">
-
-    <h2>Enter Staff PIN</h2>
-
-    <ion-item>
-      <ion-label position="stacked">PIN</ion-label>
-      <ion-input
-        [(ngModel)]="pin"
-        type="password"
-        inputmode="numeric"
-        maxlength="4"
-        placeholder="••••">
-      </ion-input>
-    </ion-item>
-
-    @if (error) {
-      <ion-text color="danger">
-        <p>{{ error }}</p>
-      </ion-text>
+  <div class="pin-indicators" [class.shake]="shake">
+    @for (digit of digitIndicators; track $index) {
+      <span class="pin-dot" [class.filled]="pin.length > $index"></span>
     }
-
-    <ion-button expand="block" class="ion-margin-top" (click)="login()">
-      Login
-    </ion-button>
-
   </div>
-</ion-content>
+
+  <div class="keypad">
+    @for (key of keypad; track $index) {
+      @if (key === 'back') {
+        <button class="key key-back" (click)="pressKey(key)" aria-label="Backspace">⌫</button>
+      } @else if (key === '') {
+        <span class="key key-empty"></span>
+      } @else {
+        <button class="key" (click)="pressKey(key)">{{ key }}</button>
+      }
+    }
+  </div>
+</div>

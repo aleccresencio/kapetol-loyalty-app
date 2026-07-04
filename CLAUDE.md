@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-Kapetol Loyalty App — an Ionic + Angular 21 mobile-first web app for a cafe loyalty points system. It has two roles in a single app: **customers** (register, view QR code, browse/redeem rewards) and **cafe staff** (scan QR to award points, scan QR to deduct points for rewards).
+Kapetol Loyalty App — an installable Angular 21 PWA for a cafe loyalty points system. It has two roles in a single app, split by route: **customers** (`/`, `/rewards` — identify by phone number, view QR code, browse/redeem rewards, install as an app) and **cafe staff** (`/staff/**`, PIN-gated — scan QR to award points, scan QR to deduct points for rewards).
 
 The companion .NET 10 backend lives in this repo at `KapetolLoyaltyApi/` and runs on `http://localhost:5166`.
 
@@ -19,15 +19,25 @@ ng test           # unit tests via Vitest
 
 ## Architecture
 
-### Ionic + Angular standalone
+### Plain Angular standalone PWA
 
-All components are standalone (no NgModules). Ionic is set up via `provideIonicAngular()` in `app.config.ts` — this registers Ionic's Stencil web components with the browser. The root template must use `<ion-app>` and `<ion-router-outlet>` (not Angular's `<router-outlet>`) for pages to mount correctly.
+All components are standalone (no NgModules, no UI framework). The root template uses Angular's own `<router-outlet>`. Pages are hand-styled with plain HTML/CSS; shared button/field/card/list styles live in `src/styles.css` (global, not scoped) so pages don't repeat the same class definitions.
 
-Ionic components are imported individually from `@ionic/angular/standalone` in each component's `imports` array. Only import what the template actually uses — Angular's strict template checking will warn about unused imports.
+The app is installable via `@angular/service-worker` (`provideServiceWorker` in `app.config.ts`, config in `ngsw-config.json`, manifest at `public/manifest.webmanifest`). `PwaInstallService` (`src/app/services/pwa-install.ts`) captures the `beforeinstallprompt` event for a custom Android/Chrome "Install" button, and separately detects iOS Safari (no install-prompt API exists there) to show a dismissible "tap Share → Add to Home Screen" banner. Both are surfaced on the customer home page.
 
 ### Routing
 
-All routes use lazy `loadComponent`. The `/staff/scan` and `/staff/redeem` routes are protected by `staffGuard` (`src/app/guards/staff.guard.ts`), which checks `SessionService.isStaffAuthenticated()` and redirects to `/staff/login` if false.
+Flattened, route-based flows — the URL alone determines customer vs. staff, there is no chooser screen:
+
+| Route | Flow |
+|---|---|
+| `/` | Customer home — phone-first identification, falls into the dashboard view once a `customerId` is in `localStorage` |
+| `/rewards` | Customer rewards list + redemption |
+| `/staff/login` | Staff PIN pad |
+| `/staff/scan` | Staff — scan QR to award points (guarded) |
+| `/staff/redeem` | Staff — scan QR to redeem a reward (guarded) |
+
+All routes use lazy `loadComponent`. `/staff/scan` and `/staff/redeem` are protected by `staffGuard` (`src/app/guards/staff.guard.ts`), which checks `SessionService.isStaffAuthenticated()` (token present and not expired) and redirects to `/staff/login` if false.
 
 ### Services
 
@@ -36,22 +46,21 @@ All routes use lazy `loadComponent`. The `/staff/scan` and `/staff/redeem` route
 | `CustomerService` | API calls: register, getById, getByPhone, getQrCodeUrl |
 | `RewardsService` | API calls: list rewards, redeem reward |
 | `LoyaltyService` | API call: POST `/api/loyalty/scan` (award points) |
-| `SessionService` | Persists state — customer id/phone in `localStorage`, staff auth in `sessionStorage` |
+| `StaffAuthService` | API call: POST `/api/staff/verify-pin` |
+| `SessionService` | Persists state — customer id/phone in `localStorage`, staff `{token, expiresAt}` in `sessionStorage` |
+| `StaffIdleService` | Listens for click/keydown/touchstart activity and refreshes the staff session's idle expiry while authenticated |
+| `PwaInstallService` | Captures `beforeinstallprompt`; detects iOS Safari for the manual install banner |
 
-All API services hardcode the base URL `http://localhost:5166`. The API uses camelCase JSON.
+All API services read the base URL from `environment.apiUrl` (`src/environments/`), swapped at build time via `angular.json`'s `fileReplacements` — `environment.ts` points at `localhost:5166` for dev, `environment.prod.ts` at the deployed Azure API. The API uses camelCase JSON.
 
 ### Session / auth
 
-- **Customer identity** is stored in `localStorage` (survives browser close). `CustomerDashboardPage` reads `customerId` + `customerPhone` from `SessionService` and calls `getByPhone()` to fetch current points.
-- **Staff auth** is stored in `sessionStorage` (clears on tab close). The PIN is hardcoded as `'1234'` in `StaffLoginPage`.
+- **Customer identity** is stored in `localStorage` (survives browser close). `CustomerHomePage` reads `customerId` + `customerPhone` from `SessionService` and calls `getByPhone()` to fetch current points.
+- **Staff auth** is a single shared PIN, validated server-side (`POST /api/staff/verify-pin`, config value `StaffPin`) rather than hardcoded in the frontend. On success the API returns an HMAC-signed session token + expiry, stored in `sessionStorage` via `SessionService.setStaffSession()`. The session idle-expires after 15 minutes (`STAFF_IDLE_TIMEOUT_MS` in `session.ts`); `StaffIdleService` resets that expiry on any user activity while authenticated. Note: the `scan`/`redeem` API endpoints themselves do not check this token — it only gates the SPA route via `staffGuard`.
 
 ### QR scanning
 
-`@zxing/ngx-scanner` (`ZXingScannerModule`) is used on the staff scan and redeem pages. It accesses the camera via browser WebRTC — no Capacitor plugin needed, so it works in both browser and native builds. On scan success, the `qrCodeId` is auto-populated and the form submits.
-
-### CSS
-
-Ionic global styles are imported in `src/styles.css` via `@import "@ionic/angular/css/..."`. The build system resolves these from `node_modules`. Do not move them to `angular.json` styles array — the current setup works with Angular's esbuild pipeline.
+`html5-qrcode`'s `Html5Qrcode` class is used on the staff scan and redeem pages — `start(cameraConfig, onScanSuccess)` handles camera access via WebRTC and decoding internally (no manual canvas/`requestAnimationFrame` loop needed). On scan success, the `qrCodeId` is auto-populated and the form submits.
 
 ### Backend (KapetolLoyaltyApi)
 
@@ -59,21 +68,22 @@ Key endpoints consumed by this app:
 
 | Method | Path | Used by |
 |---|---|---|
-| POST | `/customers` | CustomerRegisterPage |
+| POST | `/customers` | CustomerHomePage (new customer) |
 | GET | `/customers/{id}` | — |
-| GET | `/customers/by-phone/{phone}` | CustomerDashboardPage, CustomerRewardsPage |
-| GET | `/customers/{id}/qrcode` | CustomerDashboardPage (as `<img>` src) |
+| GET | `/customers/by-phone/{phone}` | CustomerHomePage, CustomerRewardsPage |
+| GET | `/customers/{id}/qrcode` | CustomerHomePage (as `<img>` src) |
 | POST | `/api/loyalty/scan` | StaffScanPage |
 | POST | `/api/loyalty/redeem` | StaffRedeemPage, CustomerRewardsPage |
 | GET | `/api/rewards` | CustomerRewardsPage, StaffRedeemPage |
+| POST | `/api/staff/verify-pin` | StaffLoginPage |
 
-The Rewards table is auto-created and seeded (4 sample rewards) on first API startup via raw SQL in `Program.cs`.
+The Rewards table is auto-created and seeded (4 sample rewards) via EF Core migrations, not raw SQL — see `Migrations/` and `AppDbContext.cs`.
 
 ## Change detection
 
-All components use Angular's default change detection, but Ionic's page lifecycle and HTTP callbacks run outside the zone in practice — meaning the view will not update automatically after an Observable `next` or `error` callback sets a property.
+All components use Angular's default (zone.js) change detection. The `this.cdr.detectChanges()` calls after HTTP subscriptions predate the Ionic → plain Angular pivot, when Ionic's Stencil web components broke zone propagation for state set inside their event handlers. With Ionic removed, zone.js should propagate plain HTTP callbacks automatically — the manual calls are kept for now as a known-safe pattern but haven't been confirmed unnecessary. If you touch one of these components, feel free to try removing it and verify in the browser that the view still updates.
 
-**Rule: always call `this.cdr.detectChanges()` immediately after setting component state inside any Observable callback** (HTTP subscriptions, async operations). Inject `ChangeDetectorRef` via the constructor.
+**Existing rule (may be redundant post-pivot):** call `this.cdr.detectChanges()` immediately after setting component state inside any Observable callback (HTTP subscriptions, async operations). Inject `ChangeDetectorRef` via the constructor.
 
 ```typescript
 constructor(private cdr: ChangeDetectorRef) {}
