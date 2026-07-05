@@ -24,4 +24,8 @@ export class RewardsService {
       { qrCodeId, rewardId }
     );
   }
+
+  getRedemptionQrCodeUrl(qrCodeId: string, rewardId: number): string {
+    return `${this.apiUrl}/api/loyalty/redeem-qrcode?qrCodeId=${encodeURIComponent(qrCodeId)}&rewardId=${rewardId}`;
+  }
 }

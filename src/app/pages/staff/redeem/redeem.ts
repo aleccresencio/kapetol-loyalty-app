@@ -1,9 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Html5Qrcode } from 'html5-qrcode';
-import { RewardsService, Reward } from '../../../services/rewards';
+import { RewardsService } from '../../../services/rewards';
 
 const READER_ELEMENT_ID = 'staff-redeem-reader';
+const REDEMPTION_QR_PATTERN = /^REDEEM:(.+):(\d+)$/;
 
 @Component({
   selector: 'app-staff-redeem',
@@ -12,9 +13,7 @@ const READER_ELEMENT_ID = 'staff-redeem-reader';
   templateUrl: './redeem.html',
   styleUrls: ['./redeem.css']
 })
-export class StaffRedeemPage implements OnInit {
-  rewards: Reward[] = [];
-  selectedReward: Reward | null = null;
+export class StaffRedeemPage {
   scanning = false;
   result: { name: string; rewardName: string; pointsDeducted: number; totalPoints: number } | null = null;
   error = '';
@@ -29,17 +28,7 @@ export class StaffRedeemPage implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    this.rewardsService.getRewards().subscribe({
-      next: (rewards) => {
-        this.rewards = rewards;
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  selectReward(reward: Reward) {
-    this.selectedReward = reward;
+  startScanning() {
     this.result = null;
     this.error = '';
     this.scanning = true;
@@ -68,12 +57,16 @@ export class StaffRedeemPage implements OnInit {
     this.processRedemption(decodedText);
   }
 
-  private processRedemption(qrCodeId: string) {
-    if (!this.selectedReward) return;
-    const reward = this.selectedReward;
-    this.selectedReward = null;
+  private processRedemption(decodedText: string) {
+    const match = REDEMPTION_QR_PATTERN.exec(decodedText);
+    if (!match) {
+      this.error = 'Invalid redemption code. Ask the customer to select a reward again.';
+      this.cdr.detectChanges();
+      return;
+    }
+    const [, qrCodeId, rewardIdStr] = match;
 
-    this.rewardsService.redeemReward(qrCodeId, reward.id).subscribe({
+    this.rewardsService.redeemReward(qrCodeId, Number(rewardIdStr)).subscribe({
       next: (response) => {
         this.result = response;
         this.cdr.detectChanges();
@@ -95,7 +88,6 @@ export class StaffRedeemPage implements OnInit {
   cancelScanning() {
     this.stopCamera();
     this.scanning = false;
-    this.selectedReward = null;
   }
 
   goBack() {

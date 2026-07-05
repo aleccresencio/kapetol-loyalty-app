@@ -61,6 +61,25 @@ public class LoyaltyController : ControllerBase
         });
     }
 
+    [HttpGet("redeem-qrcode")]
+    public async Task<IActionResult> GenerateRedemptionQrCode([FromQuery] string qrCodeId, [FromQuery] int rewardId)
+    {
+        var customer = await _context.Customers.FirstOrDefaultAsync(c => c.QRCodeId == qrCodeId);
+        if (customer == null)
+            return NotFound("Customer not found");
+
+        var reward = await _context.Rewards.FindAsync(rewardId);
+        if (reward == null || !reward.IsActive)
+            return NotFound("Reward not found");
+
+        using var qrGenerator = new QRCodeGenerator();
+        var qrData = qrGenerator.CreateQrCode($"REDEEM:{qrCodeId}:{rewardId}", QRCodeGenerator.ECCLevel.Q);
+        var qrCode = new PngByteQRCode(qrData);
+        byte[] qrBytes = qrCode.GetGraphic(20);
+
+        return File(qrBytes, "image/png");
+    }
+
     [HttpPost("scan")]
     public async Task<IActionResult> ScanQr([FromBody] ScanQrRequest request)
     {

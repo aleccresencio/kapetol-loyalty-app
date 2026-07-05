@@ -15,6 +15,8 @@ export class CustomerRewardsPage implements OnInit {
   rewards: Reward[] = [];
   totalPoints = 0;
   qrCodeId = '';
+  selectedReward: Reward | null = null;
+  redemptionQrUrl = '';
 
   constructor(
     private rewardsService: RewardsService,
@@ -50,25 +52,18 @@ export class CustomerRewardsPage implements OnInit {
       return;
     }
 
-    const confirmed = confirm(
-      `Redeem "${reward.name}" for ${reward.pointsCost} points? Show this to the staff to complete.`
-    );
-    if (confirmed) {
-      this.doRedeem(reward);
-    }
+    this.selectedReward = reward;
+    this.redemptionQrUrl = this.rewardsService.getRedemptionQrCodeUrl(this.qrCodeId, reward.id);
   }
 
-  private doRedeem(reward: Reward) {
-    this.rewardsService.redeemReward(this.qrCodeId, reward.id).subscribe({
-      next: (result) => {
-        this.totalPoints = result.totalPoints;
-        this.cdr.detectChanges();
-        alert(`"${result.rewardName}" redeemed. Remaining points: ${result.totalPoints}`);
-      },
-      error: () => {
-        alert('Redemption failed. Please ask staff for help.');
-      }
-    });
+  onQrLoadError() {
+    alert('Unable to generate redemption code. This reward may no longer be available.');
+    this.dismissQr();
+  }
+
+  dismissQr() {
+    this.selectedReward = null;
+    this.redemptionQrUrl = '';
   }
 
   goBack() {

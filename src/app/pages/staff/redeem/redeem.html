@@ -4,9 +4,9 @@
   <span></span>
 </header>
 
-@if (scanning && selectedReward) {
+@if (scanning) {
   <div class="scanner-section">
-    <h3>Scan customer QR for "{{ selectedReward.name }}"</h3>
+    <h3>Scan customer's redemption QR code</h3>
     <div [id]="readerElementId" class="scanner-video"></div>
     <button class="btn btn-outline" (click)="cancelScanning()">Cancel</button>
   </div>
@@ -26,18 +26,8 @@
     <p class="error-text">{{ error }}</p>
   }
 
-  <p class="instruction">Select a reward, then scan the customer's QR code.</p>
+  <p class="instruction">Ask the customer to open their reward QR code, then scan it.</p>
 
-  <ul class="reward-list">
-    @for (reward of rewards; track reward.id) {
-      <li class="reward-item" (click)="selectReward(reward)">
-        <div>
-          <h2>{{ reward.name }}</h2>
-          <p>{{ reward.description }}</p>
-        </div>
-        <span class="badge">{{ reward.pointsCost }} pts</span>
-      </li>
-    }
-  </ul>
+  <button class="btn btn-primary" (click)="startScanning()">Scan QR Code</button>
 
 }

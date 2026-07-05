@@ -6,31 +6,42 @@
 
 <div class="rewards-container">
 
-  <div class="points-summary">
-    <span class="points-label">Your Points</span>
-    <span class="badge">{{ totalPoints }}</span>
-  </div>
+  @if (selectedReward) {
+    <div class="card qr-card">
+      <h2>{{ selectedReward.name }}</h2>
+      <img [src]="redemptionQrUrl" alt="Redemption QR Code" class="qr-image" (error)="onQrLoadError()" />
+      <p class="qr-hint">Show this to the cafe staff to redeem your reward.</p>
+      <button class="btn btn-outline" (click)="dismissQr()">Cancel</button>
+    </div>
+  } @else {
 
-  <ul class="reward-list">
-    @for (reward of rewards; track reward.id) {
-      <li class="reward-item">
-        <div>
-          <h2>{{ reward.name }}</h2>
-          <p>{{ reward.description }}</p>
-        </div>
-        <div class="reward-end">
-          <span class="badge" [class.badge-muted]="totalPoints < reward.pointsCost">
-            {{ reward.pointsCost }} pts
-          </span>
-          <button
-            class="btn btn-primary btn-small"
-            [disabled]="totalPoints < reward.pointsCost"
-            (click)="redeemReward(reward)">
-            Redeem
-          </button>
-        </div>
-      </li>
-    }
-  </ul>
+    <div class="points-summary">
+      <span class="points-label">Your Points</span>
+      <span class="badge">{{ totalPoints }}</span>
+    </div>
+
+    <ul class="reward-list">
+      @for (reward of rewards; track reward.id) {
+        <li class="reward-item">
+          <div>
+            <h2>{{ reward.name }}</h2>
+            <p>{{ reward.description }}</p>
+          </div>
+          <div class="reward-end">
+            <span class="badge" [class.badge-muted]="totalPoints < reward.pointsCost">
+              {{ reward.pointsCost }} pts
+            </span>
+            <button
+              class="btn btn-primary btn-small"
+              [disabled]="totalPoints < reward.pointsCost"
+              (click)="redeemReward(reward)">
+              Redeem
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+
+  }
 
 </div>
