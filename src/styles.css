@@ -156,3 +156,33 @@ a {
   padding: 0.35rem 0.6rem;
   border-radius: 999px;
 }
+
+.warmup-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #fff3d6;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  margin: 1rem 1.25rem;
+  font-size: 0.85rem;
+  color: #6b6258;
+}
+
+.warmup-banner p {
+  margin: 0;
+}
+
+.spinner {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #d8d0c5;
+  border-top-color: #6b4226;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

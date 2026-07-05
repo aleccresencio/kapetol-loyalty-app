@@ -1,9 +1,12 @@
 import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { CustomerService } from '../../../services/customer';
 import { SessionService } from '../../../services/session';
 import { PwaInstallService } from '../../../services/pwa-install';
+import { ApiWarmupService } from '../../../services/api-warmup';
+import { COLD_START_STATUSES } from '../../../interceptors/cold-start-retry-interceptor';
 
 type ViewState = 'phone' | 'name' | 'dashboard';
 
@@ -31,7 +34,8 @@ export class CustomerHomePage implements OnInit {
     private session: SessionService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    readonly pwaInstall: PwaInstallService
+    readonly pwaInstall: PwaInstallService,
+    readonly apiWarmup: ApiWarmupService
   ) {}
 
   ngOnInit() {
@@ -40,7 +44,12 @@ export class CustomerHomePage implements OnInit {
 
     if (id && phone) {
       this.customerService.getByPhone(phone).subscribe({
-        next: (customer) => this.showDashboard(customer.id, phone, customer.name, customer.totalPoints)
+        next: (customer) => this.showDashboard(customer.id, phone, customer.name, customer.totalPoints),
+        error: (err: HttpErrorResponse) => {
+          if (!COLD_START_STATUSES.has(err.status)) return;
+          this.error = 'Unable to reach the server. Please check your connection and try again.';
+          this.cdr.detectChanges();
+        }
       });
     }
   }
@@ -56,9 +65,13 @@ export class CustomerHomePage implements OnInit {
 
     this.customerService.getByPhone(phone).subscribe({
       next: (customer) => this.showDashboard(customer.id, phone, customer.name, customer.totalPoints),
-      error: () => {
+      error: (err: HttpErrorResponse) => {
         this.loading = false;
-        this.view = 'name';
+        if (err.status === 404) {
+          this.view = 'name';
+        } else {
+          this.error = 'Unable to reach the server. Please check your connection and try again.';
+        }
         this.cdr.detectChanges();
       }
     });

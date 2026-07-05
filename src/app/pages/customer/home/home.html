@@ -37,6 +37,14 @@
 } @else {
 
   <div class="entry-container">
+
+    @if (apiWarmup.isWarming()) {
+      <div class="warmup-banner">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>Waking up the server — this can take up to 20 seconds.</p>
+      </div>
+    }
+
     <div class="entry-logo">
       <img src="logo.png" alt="The Kapetol Premium Cafe" />
     </div>
