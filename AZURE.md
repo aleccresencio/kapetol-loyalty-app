@@ -302,7 +302,7 @@ To view or update secrets: GitHub → repo → Settings → Secrets and variable
 1. Open the same URL and tap **Staff Login**
 2. Enter PIN: `1234`
 3. **Scan QR (award points):** tap Scan, point camera at a customer QR code,
-   submit — the customer receives 10 points
+   submit — the customer receives 1 point for every ₱50 spent
 4. **Redeem reward:** tap Redeem, scan the customer QR, select a reward from
    the list, submit — points are deducted
 

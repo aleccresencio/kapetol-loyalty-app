@@ -23,6 +23,7 @@ export class CustomerHomePage implements OnInit {
   name = '';
   error = '';
   loading = false;
+  showPointsInfo = false;
 
   customerName = '';
   totalPoints = 0;

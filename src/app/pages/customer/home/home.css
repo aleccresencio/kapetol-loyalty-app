@@ -31,9 +31,67 @@
   line-height: 1;
 }
 
+.points-label-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.points-label-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .points-label {
   font-size: 1.2rem;
   color: #6b6258;
+}
+
+.info-icon {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  color: #6b6258;
+  cursor: pointer;
+}
+
+.points-info {
+  font-size: 0.8rem;
+  color: #6b6258;
+  margin: 0.5rem 0 0;
+}
+
+.info-icon {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  color: #6b6258;
+  cursor: pointer;
+}
+
+.points-info {
+  font-size: 0.8rem;
+  color: #6b6258;
+  margin: 0.5rem 0 0;
+}
+
+.pull-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: height 0.2s ease, opacity 0.2s ease;
+}
+
+.pull-indicator.visible {
+  opacity: 1;
 }
 
 .qr-image {

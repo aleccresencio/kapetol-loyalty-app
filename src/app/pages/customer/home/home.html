@@ -21,7 +21,13 @@
       <h2>Hi, {{ customerName }}!</h2>
       <div class="points-display">
         <span class="points-value">{{ totalPoints }}</span>
-        <span class="points-label">points</span>
+        <span class="points-label-row">
+          <span class="points-label">points</span>
+          <button type="button" class="info-icon" (click)="showPointsInfo = !showPointsInfo" aria-label="How points work">ⓘ</button>
+        </span>
+        @if (showPointsInfo) {
+          <p class="points-info">For every ₱50 you spend, you earn 1 point.</p>
+        }
       </div>
     </div>
 

@@ -90,7 +90,7 @@ public class LoyaltyController : ControllerBase
             return NotFound("Customer not found");
 
         // Calculate points
-        int pointsToAdd = (int)(request.TotalSpent / 100);
+        int pointsToAdd = (int)(request.TotalSpent / 50);
 
         if (pointsToAdd <= 0)
         {
