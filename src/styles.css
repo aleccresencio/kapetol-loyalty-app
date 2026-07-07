@@ -157,6 +157,34 @@ a {
   border-radius: 999px;
 }
 
+.update-banner {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: #6b4226;
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
+}
+
+.update-banner p {
+  margin: 0;
+}
+
+.update-banner .btn {
+  width: auto;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  background: #fff;
+  color: #6b4226;
+  white-space: nowrap;
+}
+
 .warmup-banner {
   display: flex;
   align-items: center;

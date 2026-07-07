@@ -1,1 +1,7 @@
+@if (pwaUpdate.updateAvailable()) {
+  <div class="update-banner">
+    <p>A new version is available.</p>
+    <button class="btn btn-primary" (click)="pwaUpdate.reloadForUpdate()">Update now</button>
+  </div>
+}
 <router-outlet></router-outlet>
