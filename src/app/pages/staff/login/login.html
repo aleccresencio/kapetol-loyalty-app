@@ -3,22 +3,21 @@
   <h1>Staff access</h1>
   <p class="subtitle">Enter your 4-digit PIN</p>
 
-  @if (apiWarmup.isWarming()) {
-    <div class="warmup-banner">
-      <span class="spinner" aria-hidden="true"></span>
-      <p>Waking up the server — this can take up to 20 seconds.</p>
-    </div>
-  }
-
   @if (error) {
     <p class="error-text">{{ error }}</p>
   }
 
-  <div class="pin-indicators" [class.shake]="shake">
-    @for (digit of digitIndicators; track $index) {
-      <span class="pin-dot" [class.filled]="pin.length > $index"></span>
-    }
-  </div>
+  @if (submitting) {
+    <div class="pin-status">
+      <span class="spinner" aria-hidden="true"></span>
+    </div>
+  } @else {
+    <div class="pin-indicators" [class.shake]="shake">
+      @for (digit of digitIndicators; track $index) {
+        <span class="pin-dot" [class.filled]="pin.length > $index"></span>
+      }
+    </div>
+  }
 
   <div class="keypad">
     @for (key of keypad; track $index) {

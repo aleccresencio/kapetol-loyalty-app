@@ -38,13 +38,6 @@
 
   <div class="entry-container">
 
-    @if (apiWarmup.isWarming()) {
-      <div class="warmup-banner">
-        <span class="spinner" aria-hidden="true"></span>
-        <p>Waking up the server — this can take up to 20 seconds.</p>
-      </div>
-    }
-
     <div class="entry-logo">
       <img src="logo.png" alt="The Kapetol Premium Cafe" />
     </div>
@@ -62,7 +55,13 @@
         <p class="error-text">{{ error }}</p>
       }
 
-      <button class="btn btn-primary" (click)="continueWithPhone()" [disabled]="loading">Continue</button>
+      <button class="btn btn-primary" (click)="continueWithPhone()" [disabled]="loading">
+        @if (loading) {
+          <span class="btn-spinner" aria-hidden="true"></span>
+        } @else {
+          Continue
+        }
+      </button>
 
       <p class="entry-footnote">No password. Your QR code is generated automatically.</p>
     }
@@ -77,7 +76,13 @@
         <p class="error-text">{{ error }}</p>
       }
 
-      <button class="btn btn-primary" (click)="register()" [disabled]="loading">Create Account</button>
+      <button class="btn btn-primary" (click)="register()" [disabled]="loading">
+        @if (loading) {
+          <span class="btn-spinner" aria-hidden="true"></span>
+        } @else {
+          Create Account
+        }
+      </button>
     }
   </div>
 

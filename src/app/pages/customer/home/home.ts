@@ -5,7 +5,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { CustomerService } from '../../../services/customer';
 import { SessionService } from '../../../services/session';
 import { PwaInstallService } from '../../../services/pwa-install';
-import { ApiWarmupService } from '../../../services/api-warmup';
 import { COLD_START_STATUSES } from '../../../interceptors/cold-start-retry-interceptor';
 
 type ViewState = 'phone' | 'name' | 'dashboard';
@@ -34,8 +33,7 @@ export class CustomerHomePage implements OnInit {
     private session: SessionService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    readonly pwaInstall: PwaInstallService,
-    readonly apiWarmup: ApiWarmupService
+    readonly pwaInstall: PwaInstallService
   ) {}
 
   ngOnInit() {

@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { StaffAuthService } from '../../../services/staff-auth';
 import { SessionService } from '../../../services/session';
-import { ApiWarmupService } from '../../../services/api-warmup';
 
 const PIN_LENGTH = 4;
 
@@ -27,8 +26,7 @@ export class StaffLoginPage {
     private staffAuth: StaffAuthService,
     private session: SessionService,
     private router: Router,
-    private cdr: ChangeDetectorRef,
-    readonly apiWarmup: ApiWarmupService
+    private cdr: ChangeDetectorRef
   ) {}
 
   pressKey(key: string) {
