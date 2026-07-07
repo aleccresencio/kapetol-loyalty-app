@@ -23,10 +23,11 @@ public class AppDbContext : DbContext
         );
 
         modelBuilder.Entity<Reward>().HasData(
-            new Reward { Id = 1, Name = "Free Coffee", Description = "Redeem for a free cup of coffee", PointsCost = 50, IsActive = true },
-            new Reward { Id = 2, Name = "Free Pastry", Description = "Redeem for a free pastry of your choice", PointsCost = 80, IsActive = true },
-            new Reward { Id = 3, Name = "Free Meal", Description = "Redeem for a free meal set", PointsCost = 150, IsActive = true },
-            new Reward { Id = 4, Name = "10% Discount", Description = "Get 10% off your next order", PointsCost = 30, IsActive = true }
+            new Reward { Id = 1, Name = "Free Pastry", Description = "Redeem for a free pastry of your choice", PointsCost = 10, IsActive = true },
+            new Reward { Id = 2, Name = "Free Mediano Iced Tea", Description = "Redeem for a free mediano iced tea", PointsCost = 30, IsActive = true },
+            new Reward { Id = 3, Name = "Free Mediano Americano", Description = "Redeem for a free mediano americano", PointsCost = 50, IsActive = true },
+            new Reward { Id = 4, Name = "Free Mediano Coffee/Frappe", Description = "Redeem for a free mediano coffee or frappe", PointsCost = 70, IsActive = true },
+            new Reward { Id = 5, Name = "Free All-day Breakfast Meal", Description = "Redeem for a free all-day breakfast meal", PointsCost = 100, IsActive = true }
         );
     }
 }
