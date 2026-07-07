@@ -50,7 +50,7 @@ export class PwaInstallService {
     return isIos && isSafari;
   }
 
-  private isStandalone(): boolean {
+  isStandalone(): boolean {
     return window.matchMedia('(display-mode: standalone)').matches
       || (window.navigator as unknown as { standalone?: boolean }).standalone === true;
   }

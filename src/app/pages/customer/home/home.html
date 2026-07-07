@@ -6,6 +6,10 @@
 
   <div class="home-container">
 
+    <div class="pull-indicator" [style.height.px]="refreshing ? 50 : pullOffset" [class.visible]="pullOffset > 0 || refreshing">
+      <span class="spinner" aria-hidden="true"></span>
+    </div>
+
     @if (pwaInstall.showIosBanner()) {
       <div class="install-banner">
         <p>Install this app: tap <strong>Share</strong> → <strong>Add to Home Screen</strong>.</p>
