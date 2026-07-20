@@ -1,0 +1,22 @@
+.history-container {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.reward-item {
+  cursor: default;
+}
+
+.txn-date {
+  font-size: 0.75rem;
+  color: #9a9186;
+  margin-top: 0.15rem;
+}
+
+.badge-earn {
+  background: #2e7d32;
+}
+
+.badge-redeem {
+  background: #b3261e;
+}

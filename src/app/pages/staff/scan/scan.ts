@@ -99,6 +99,10 @@ export class StaffScanPage {
     this.router.navigate(['/staff/redeem']);
   }
 
+  goToHistory() {
+    this.router.navigate(['/staff/history']);
+  }
+
   logout() {
     this.stopCamera();
     this.session.clearStaff();

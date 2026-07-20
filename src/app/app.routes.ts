@@ -30,6 +30,12 @@ export const routes: Routes = [
       import('./pages/staff/redeem/redeem').then(m => m.StaffRedeemPage)
   },
   {
+    path: 'staff/history',
+    canActivate: [staffGuard],
+    loadComponent: () =>
+      import('./pages/staff/history/history').then(m => m.StaffHistoryPage)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

@@ -1,0 +1,42 @@
+<header class="page-header">
+  <button class="link-button" (click)="goBack()">Back</button>
+  <h1>Transaction History</h1>
+  <span></span>
+</header>
+
+<div class="history-container">
+
+  @if (error) {
+    <p class="error-text">{{ error }}</p>
+  }
+
+  @if (!loading && transactions.length === 0 && !error) {
+    <p class="instruction">No transactions yet.</p>
+  }
+
+  <ul class="reward-list">
+    @for (txn of transactions; track txn.id) {
+      <li class="reward-item">
+        <div>
+          <h2>{{ txn.customerName }}</h2>
+          <p>{{ txn.reason }}</p>
+          <p class="txn-date">{{ txn.createdAt | date:'medium' }}</p>
+        </div>
+        <span class="badge" [class.badge-earn]="txn.points > 0" [class.badge-redeem]="txn.points < 0">
+          {{ txn.points > 0 ? '+' : '' }}{{ txn.points }} pts
+        </span>
+      </li>
+    }
+  </ul>
+
+  @if (hasMore) {
+    <button class="btn btn-primary" [disabled]="loading" (click)="loadMore()">
+      @if (loading) {
+        <span class="btn-spinner" aria-hidden="true"></span>
+      } @else {
+        Load More
+      }
+    </button>
+  }
+
+</div>
