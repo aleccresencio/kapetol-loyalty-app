@@ -6,10 +6,13 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const IOS_BANNER_DISMISSED_KEY = 'pwa_ios_banner_dismissed';
+const CUSTOMER_MANIFEST_HREF = 'manifest.webmanifest';
+const STAFF_MANIFEST_HREF = 'manifest-staff.webmanifest';
 
 @Injectable({ providedIn: 'root' })
 export class PwaInstallService {
   private deferredPrompt: BeforeInstallPromptEvent | null = null;
+  private isStaffManifest = false;
 
   readonly canInstall = signal(false);
   readonly showIosBanner = signal(false);
@@ -41,6 +44,21 @@ export class PwaInstallService {
   dismissIosBanner(): void {
     localStorage.setItem(IOS_BANNER_DISMISSED_KEY, 'true');
     this.showIosBanner.set(false);
+  }
+
+  /**
+   * Swaps the page's <link rel="manifest"> so installing from a staff route
+   * ("Add to Home Screen") creates a separate icon that opens to /staff/login,
+   * instead of the customer manifest's start_url of "/".
+   */
+  useStaffManifest(isStaff: boolean): void {
+    if (this.isStaffManifest === isStaff) return;
+    this.isStaffManifest = isStaff;
+
+    const link = document.getElementById('app-manifest') as HTMLLinkElement | null;
+    if (link) {
+      link.href = isStaff ? STAFF_MANIFEST_HREF : CUSTOMER_MANIFEST_HREF;
+    }
   }
 
   private isIosSafari(): boolean {

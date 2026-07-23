@@ -19,6 +19,28 @@ h1 {
   margin-bottom: 1.5rem;
 }
 
+.install-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: #fff3d6;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.install-banner p {
+  margin: 0;
+}
+
+.install-btn {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
 .pin-indicators {
   display: flex;
   justify-content: center;

@@ -3,6 +3,17 @@
   <h1>Staff access</h1>
   <p class="subtitle">Enter your 4-digit PIN</p>
 
+  @if (pwaInstall.showIosBanner()) {
+    <div class="install-banner">
+      <p>Install this app: tap <strong>Share</strong> → <strong>Add to Home Screen</strong>.</p>
+      <button class="link-button" (click)="dismissIosBanner()">Dismiss</button>
+    </div>
+  }
+
+  @if (pwaInstall.canInstall()) {
+    <button class="btn btn-outline install-btn" (click)="installApp()">Install App</button>
+  }
+
   @if (error) {
     <p class="error-text">{{ error }}</p>
   }

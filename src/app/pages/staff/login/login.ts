@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { StaffAuthService } from '../../../services/staff-auth';
 import { SessionService } from '../../../services/session';
+import { PwaInstallService } from '../../../services/pwa-install';
 
 const PIN_LENGTH = 4;
 
@@ -26,8 +27,17 @@ export class StaffLoginPage {
     private staffAuth: StaffAuthService,
     private session: SessionService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    readonly pwaInstall: PwaInstallService
   ) {}
+
+  installApp() {
+    this.pwaInstall.promptInstall();
+  }
+
+  dismissIosBanner() {
+    this.pwaInstall.dismissIosBanner();
+  }
 
   pressKey(key: string) {
     if (this.submitting) return;
