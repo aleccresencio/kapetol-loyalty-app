@@ -9,6 +9,8 @@ namespace CafeLoyaltyApi.Controllers;
 public class LoyaltyController : ControllerBase
 {
 
+    private static readonly TimeZoneInfo PhilippineTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Manila");
+
     private readonly ILogger<LoyaltyController> _logger;
     private readonly AppDbContext _context;
 
@@ -17,6 +19,8 @@ public class LoyaltyController : ControllerBase
         _logger = logger;
         _context = context;
     }
+
+    private static DateTime PhilippineNow() => TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, PhilippineTimeZone);
 
     [HttpPost("redeem")]
     public async Task<IActionResult> RedeemReward([FromBody] RedeemRequest request)
@@ -44,7 +48,7 @@ public class LoyaltyController : ControllerBase
             CustomerId = customer.Id,
             Points = -reward.PointsCost,
             Reason = $"Reward: {reward.Name}",
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = PhilippineNow()
         };
 
         _context.PointsLedger.Add(entry);
@@ -103,7 +107,7 @@ public class LoyaltyController : ControllerBase
             CustomerId = customer.Id,
             Points = pointsToAdd,
             Reason = $"Purchase worth ₱{request.TotalSpent}",
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = PhilippineNow()
         };
 
         _context.PointsLedger.Add(entry);
