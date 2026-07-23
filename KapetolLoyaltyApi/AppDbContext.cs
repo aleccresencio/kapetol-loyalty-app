@@ -31,7 +31,7 @@ public class AppDbContext : DbContext
             new Reward { Id = 6, Name = "Free Waffle Cheesy Egg (B8)", Description = "Redeem for a free Waffle Cheesy Egg (B8)", PointsCost = 100, IsActive = true },
             new Reward { Id = 7, Name = "Free Spam, Egg, Rice (B12)", Description = "Redeem for a free Spam, Egg, Rice (B12)", PointsCost = 120, IsActive = true },
             new Reward { Id = 8, Name = "Free Mediano Frappe", Description = "Redeem for a free any mediano frappe", PointsCost = 140, IsActive = true },
-            new Reward { Id = 9, Name = "Free B1 or B2", Description = "Redeem for a free B1 or B2", PointsCost = 160, IsActive = true },
+            new Reward { Id = 9, Name = "Free Bacon, Egg, and Rice Meal (B1) or Sausage, Egg, and Rice Meal (B2)", Description = "Redeem for a free Bacon, Egg, and Rice Meal (B1) or Sausage, Egg, and Rice Meal (B2)", PointsCost = 160, IsActive = true },
             new Reward { Id = 10, Name = "Free All Day Breakfast + Americano", Description = "Redeem for a free All Day Breakfast of your choice plus a mediano hot/iced americano", PointsCost = 200, IsActive = true }
         );
     }
