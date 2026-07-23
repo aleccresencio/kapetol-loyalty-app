@@ -10,11 +10,41 @@
   <meta name="apple-mobile-web-app-title" content="Kapetol Staff">
   <link rel="apple-touch-icon" href="icons-staff/icon-192x192.png">
   <link rel="manifest" href="manifest-staff.webmanifest">
+  <style>
+    body {
+      font-family: -apple-system, system-ui, sans-serif;
+      background: #f5f2ee;
+      color: #2b2620;
+      margin: 0;
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+    img { width: 220px; max-width: 80%; margin-bottom: 1.5rem; }
+    h1 { font-size: 1.2rem; margin: 0 0 0.5rem; }
+    p { color: #6b6258; font-size: 0.95rem; line-height: 1.5; }
+    a.btn {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      background: #6b4226;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+  </style>
   <script>
-    location.replace('/staff/login');
+    var isStandalone = window.navigator.standalone === true
+      || window.matchMedia('(display-mode: standalone)').matches;
+    if (isStandalone) {
+      location.replace('/staff/login');
+    }
   </script>
 </head>
 <body>
-  <noscript><a href="/staff/login">Continue to staff login</a></noscript>
+  <img src="icons-staff/icon-512x512.png" alt="Kapetol Staff">
+  <h1>Staff install page</h1>
+  <p>Tap <strong>Share</strong> below, then <strong>Add to Home Screen</strong>.<br>Open the app from the new icon on your Home Screen to reach staff login.</p>
+  <a class="btn" href="/staff/login">Continue to staff login</a>
 </body>
 </html>
