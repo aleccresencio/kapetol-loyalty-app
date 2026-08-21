@@ -17,7 +17,7 @@ const READER_ELEMENT_ID = 'staff-scan-reader';
 export class StaffScanPage {
   scanning = false;
   qrCodeId = '';
-  totalSpent = 0;
+  totalSpent: number | null = null;
   result: { name: string; pointsEarned: number; totalPoints: number } | null = null;
   error = '';
 
@@ -81,11 +81,11 @@ export class StaffScanPage {
     this.error = '';
     this.result = null;
 
-    this.loyaltyService.scanQr({ qrCodeId: this.qrCodeId, totalSpent: this.totalSpent }).subscribe({
+    this.loyaltyService.scanQr({ qrCodeId: this.qrCodeId, totalSpent: this.totalSpent ?? 0 }).subscribe({
       next: (response: any) => {
         this.result = response;
         this.qrCodeId = '';
-        this.totalSpent = 0;
+        this.totalSpent = null;
         this.cdr.detectChanges();
       },
       error: (err) => {
