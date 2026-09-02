@@ -15,6 +15,7 @@ const REDEMPTION_QR_PATTERN = /^REDEEM:(.+):(\d+)$/;
 })
 export class StaffRedeemPage {
   scanning = false;
+  processing = false;
   result: { name: string; rewardName: string; pointsDeducted: number; totalPoints: number } | null = null;
   error = '';
 
@@ -52,6 +53,9 @@ export class StaffRedeemPage {
   }
 
   private onScanSuccess(decodedText: string) {
+    if (this.processing) {
+      return;
+    }
     this.scanning = false;
     this.stopCamera();
     this.processRedemption(decodedText);
@@ -65,14 +69,17 @@ export class StaffRedeemPage {
       return;
     }
     const [, qrCodeId, rewardIdStr] = match;
+    this.processing = true;
 
     this.rewardsService.redeemReward(qrCodeId, Number(rewardIdStr)).subscribe({
       next: (response) => {
         this.result = response;
+        this.processing = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.error = err.error || 'Redemption failed. Customer may not have enough points.';
+        this.processing = false;
         this.cdr.detectChanges();
       }
     });
