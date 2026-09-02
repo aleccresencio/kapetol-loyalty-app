@@ -36,7 +36,7 @@
       </div>
     }
 
-    <button class="btn btn-primary" (click)="submit()">Add Points</button>
+    <button class="btn btn-primary" (click)="submit()" [disabled]="submitting">{{ submitting ? 'Adding...' : 'Add Points' }}</button>
 
     <button class="btn btn-outline" (click)="goToRedeem()">Redeem a Reward</button>
 

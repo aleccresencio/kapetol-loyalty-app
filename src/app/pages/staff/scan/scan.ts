@@ -16,6 +16,7 @@ const READER_ELEMENT_ID = 'staff-scan-reader';
 })
 export class StaffScanPage {
   scanning = false;
+  submitting = false;
   qrCodeId = '';
   totalSpent: number | null = null;
   result: { name: string; pointsEarned: number; totalPoints: number } | null = null;
@@ -74,22 +75,28 @@ export class StaffScanPage {
   }
 
   submit() {
+    if (this.submitting) {
+      return;
+    }
     if (!this.qrCodeId) {
       this.error = 'Please scan a QR code first.';
       return;
     }
     this.error = '';
     this.result = null;
+    this.submitting = true;
 
     this.loyaltyService.scanQr({ qrCodeId: this.qrCodeId, totalSpent: this.totalSpent ?? 0 }).subscribe({
       next: (response: any) => {
         this.result = response;
         this.qrCodeId = '';
         this.totalSpent = null;
+        this.submitting = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.error = err.error || 'Transaction failed. Check QR code or amount.';
+        this.submitting = false;
         this.cdr.detectChanges();
       }
     });
