@@ -39,6 +39,16 @@
       <h2>Your QR Code</h2>
       <img [src]="qrCodeUrl" alt="Your QR Code" class="qr-image" />
       <p class="qr-hint">Show this to the cafe staff to earn or redeem points.</p>
+      <button type="button" class="btn btn-outline qr-download-btn" (click)="downloadQrCode()" [disabled]="qrDownloading">
+        @if (qrDownloading) {
+          <span class="btn-spinner" aria-hidden="true"></span>
+        } @else {
+          Download QR Code
+        }
+      </button>
+      @if (qrDownloadError) {
+        <p class="error-text">{{ qrDownloadError }}</p>
+      }
     </div>
 
     <button class="btn btn-primary" (click)="goToRewards()">Browse Rewards</button>

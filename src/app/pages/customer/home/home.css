@@ -84,6 +84,20 @@
   margin-top: 0.5rem;
 }
 
+.qr-download-btn {
+  width: 100%;
+  margin: 0.75rem 0 0;
+}
+
+.qr-download-btn .btn-spinner {
+  border-color: rgba(107, 66, 38, 0.35);
+  border-top-color: #6b4226;
+}
+
+.qr-card .error-text {
+  margin: 0.5rem 0 0;
+}
+
 .install-banner {
   display: flex;
   align-items: center;

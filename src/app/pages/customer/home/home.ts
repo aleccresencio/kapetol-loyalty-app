@@ -31,6 +31,8 @@ export class CustomerHomePage implements OnInit, AfterViewInit, OnDestroy {
   customerName = '';
   totalPoints = 0;
   qrCodeUrl = '';
+  qrDownloading = false;
+  qrDownloadError = '';
 
   refreshing = false;
   pullOffset = 0;
@@ -102,6 +104,32 @@ export class CustomerHomePage implements OnInit, AfterViewInit, OnDestroy {
       error: () => {
         this.error = 'Registration failed. Please try again.';
         this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  downloadQrCode() {
+    const id = this.session.getCustomerId();
+    if (!id) return;
+
+    this.qrDownloading = true;
+    this.qrDownloadError = '';
+
+    this.customerService.downloadQrCode(id).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `kapetol-qr-${id}.png`;
+        link.click();
+        URL.revokeObjectURL(url);
+        this.qrDownloading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.qrDownloadError = 'Unable to download QR code. Please try again.';
+        this.qrDownloading = false;
         this.cdr.detectChanges();
       }
     });

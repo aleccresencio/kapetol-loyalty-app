@@ -35,4 +35,8 @@ export class CustomerService {
   getQrCodeUrl(id: number): string {
     return `${this.apiUrl}/customers/${id}/qrcode`;
   }
+
+  downloadQrCode(id: number) {
+    return this.http.get(`${this.apiUrl}/customers/${id}/qrcode`, { responseType: 'blob' });
+  }
 }
