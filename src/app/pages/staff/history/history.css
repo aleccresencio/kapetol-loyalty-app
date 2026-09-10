@@ -1,10 +1,22 @@
 .history-container {
   max-width: 480px;
   margin: 0 auto;
+  padding-top: 1rem;
 }
 
 .reward-item {
   cursor: default;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 2.5rem 0;
+}
+
+.loading-state .spinner {
+  width: 28px;
+  height: 28px;
 }
 
 .txn-date {

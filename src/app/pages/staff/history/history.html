@@ -10,6 +10,12 @@
     <p class="error-text">{{ error }}</p>
   }
 
+  @if (loading && transactions.length === 0 && !error) {
+    <div class="loading-state">
+      <span class="spinner" aria-hidden="true"></span>
+    </div>
+  }
+
   @if (!loading && transactions.length === 0 && !error) {
     <p class="instruction">No transactions yet.</p>
   }
